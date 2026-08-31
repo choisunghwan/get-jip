@@ -33,6 +33,10 @@ export function points(p) {
   return p == null ? "—" : `${p}점`;
 }
 
+export function people(v) {
+  return v == null ? "—" : `${v}명`;
+}
+
 export function formatValue(kind, v) {
   switch (kind) {
     case "won": return won(v);
@@ -40,6 +44,7 @@ export function formatValue(kind, v) {
     case "months": return months(v);
     case "bool": return bool(v);
     case "points": return points(v);
+    case "people": return people(v);
     default: return v == null ? "—" : String(v);
   }
 }
@@ -61,6 +66,7 @@ export function deltaLabel(kind, prev, next) {
   const arrow = d > 0 ? "▲" : "▼";
   if (kind === "percent") return `${arrow}${Math.abs(Math.round(d * 1000) / 10)}%p`;
   if (kind === "points") return `${arrow}${Math.abs(Math.round(d))}점`;
+  if (kind === "people") return `${arrow}${Math.abs(Math.round(d))}명`;
   if (kind === "months") return `${arrow}${months(Math.abs(d))}`;
   return `${arrow}${won(Math.abs(d))}`;
 }

@@ -324,6 +324,40 @@ input, select, textarea {
   background: var(--panel-soft);
   color: var(--text);
 }
+.chip.selected {
+  border-color: var(--glow);
+  color: var(--glow);
+  background: rgba(79, 209, 165, 0.12);
+}
+.chip-row.big { gap: 8px; }
+.chip-row.big .chip {
+  font-size: 14px;
+  padding: 10px 15px;
+  font-weight: 600;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+.stepper-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: var(--panel-soft);
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+.stepper-btn:disabled { opacity: 0.3; }
+.stepper-val { min-width: 92px; text-align: center; }
+.stepper-num { font-size: 30px; font-weight: 800; }
+.stepper-unit { font-size: 14px; color: var(--dim); margin-left: 4px; }
 
 .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 .kv:last-child { border-bottom: none; }

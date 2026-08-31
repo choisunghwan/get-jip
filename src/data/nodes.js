@@ -130,7 +130,7 @@ export const NODES = [
     label: "부양가족",
     desc: "같은 세대에서 내가 부양하는 가족 수(배우자·자녀·부모). 청약 가점에서 1명당 5점.",
     tip: "청약 신청일 기준 3년 이상 계속 같은 등본에 올라 있어야 부모가 부양가족으로 인정된다.",
-    value: { source: "fact", key: "dependents", kind: "points" },
+    value: { source: "fact", key: "dependents", kind: "people" },
   },
 
   // ── 🟡 대출 ──

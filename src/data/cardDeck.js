@@ -43,7 +43,24 @@ export const CARD_DECK = [
       "은행은 소득 대비 갚을 수 있는 금액(DSR)으로 대출 한도를 정해요. 소득이 사실상 한도를 결정합니다. " +
       "맞벌이면 부부 합산으로 넣으세요.",
     tip: "보너스·성과급 포함 세전 금액. 프리랜서·사업자는 소득 증빙 방식에 따라 인정액이 달라져요.",
-    field: { key: "annualIncome", input: "number", unit: "만원", scale: 10000, placeholder: "예: 6000" },
+    field: {
+      key: "annualIncome",
+      input: "chips",
+      unit: "만원",
+      scale: 10000,
+      allowCustom: true,
+      placeholder: "예: 6500",
+      options: [
+        { label: "3천만", value: 30_000_000 },
+        { label: "4천만", value: 40_000_000 },
+        { label: "5천만", value: 50_000_000 },
+        { label: "6천만", value: 60_000_000 },
+        { label: "7천만", value: 70_000_000 },
+        { label: "8천만", value: 80_000_000 },
+        { label: "1억", value: 100_000_000 },
+        { label: "1.2억", value: 120_000_000 },
+      ],
+    },
   },
   {
     id: "region",
@@ -89,7 +106,26 @@ export const CARD_DECK = [
     title: "목표 집값은 얼마인가요?",
     body: "지금 마음에 둔 가격대면 돼요. 정확할 필요 없어요 — 넣고 나서 조정하면서 감을 잡는 게 목적이에요.",
     tip: "호가 말고 '실거래가'로. 국토부 실거래가 공개시스템에서 같은 단지 최근 3개월 거래를 보세요.",
-    field: { key: "targetPrice", input: "number", unit: "억원", scale: 100000000, step: 0.1, placeholder: "예: 8" },
+    field: {
+      key: "targetPrice",
+      input: "chips",
+      unit: "억원",
+      scale: 100_000_000,
+      step: 0.1,
+      allowCustom: true,
+      placeholder: "예: 8.5",
+      options: [
+        { label: "4억", value: 400_000_000 },
+        { label: "5억", value: 500_000_000 },
+        { label: "6억", value: 600_000_000 },
+        { label: "7억", value: 700_000_000 },
+        { label: "8억", value: 800_000_000 },
+        { label: "9억", value: 900_000_000 },
+        { label: "10억", value: 1_000_000_000 },
+        { label: "12억", value: 1_200_000_000 },
+        { label: "15억", value: 1_500_000_000 },
+      ],
+    },
   },
   {
     id: "seed",
@@ -100,7 +136,25 @@ export const CARD_DECK = [
       "예·적금, 주식 현금화분, 확정된 부모 지원까지 '실제로 잔금에 쓸 수 있는' 돈만 세요. " +
       "지금 사는 집 전세보증금은 빼는 게 안전해요(돌려받는 시점이 어긋날 수 있어서).",
     tip: "이 돈이 필요 현금에 못 미치는 만큼이 '부족분'이고, 월 저축액으로 나누면 기간이 나와요.",
-    field: { key: "seedSavings", input: "number", unit: "억원", scale: 100000000, step: 0.1, placeholder: "예: 1.5" },
+    field: {
+      key: "seedSavings",
+      input: "chips",
+      unit: "억원",
+      scale: 100_000_000,
+      step: 0.1,
+      allowCustom: true,
+      placeholder: "예: 1.8",
+      options: [
+        { label: "3천만", value: 30_000_000 },
+        { label: "5천만", value: 50_000_000 },
+        { label: "7천만", value: 70_000_000 },
+        { label: "1억", value: 100_000_000 },
+        { label: "1.5억", value: 150_000_000 },
+        { label: "2억", value: 200_000_000 },
+        { label: "3억", value: 300_000_000 },
+        { label: "4억", value: 400_000_000 },
+      ],
+    },
   },
   {
     id: "monthly",
@@ -109,7 +163,22 @@ export const CARD_DECK = [
     title: "매달 얼마씩 모으고 있나요?",
     body: "부족분을 이 금액으로 나누면 '몇 달 뒤에 살 수 있는지'가 나와요.",
     tip: "보너스를 뺀 '확실한' 금액으로. 계획은 최저선으로 세워야 안 흔들려요.",
-    field: { key: "monthlySaving", input: "number", unit: "만원", scale: 10000, placeholder: "예: 200" },
+    field: {
+      key: "monthlySaving",
+      input: "chips",
+      unit: "만원",
+      scale: 10000,
+      allowCustom: true,
+      placeholder: "예: 250",
+      options: [
+        { label: "50만", value: 500_000 },
+        { label: "100만", value: 1_000_000 },
+        { label: "150만", value: 1_500_000 },
+        { label: "200만", value: 2_000_000 },
+        { label: "300만", value: 3_000_000 },
+        { label: "400만", value: 4_000_000 },
+      ],
+    },
   },
 
   {
@@ -130,7 +199,7 @@ export const CARD_DECK = [
     body:
       "만 30세부터(또는 혼인신고일부터) 집 없이 지낸 기간이에요. 부모님 집에 살아도 세대분리 후 만 30세가 지났으면 쌓여요.",
     tip: "잘 모르겠으면 대략만 넣으세요. 청약홈에서 정확한 무주택 기간을 조회할 수 있어요.",
-    field: { key: "homelessMonths", input: "number", unit: "년", scale: 12, placeholder: "예: 5" },
+    field: { key: "homelessMonths", input: "stepper", unit: "년", scale: 12, min: 0, max: 40, step: 1, default: 3 },
   },
   {
     id: "account",
@@ -139,7 +208,7 @@ export const CARD_DECK = [
     title: "청약통장에 가입한 지 얼마나 됐나요?",
     body: "주택청약종합저축 가입 기간이에요. 아직 없으면 0을 넣으세요 — 오늘 만들면 오늘부터 쌓입니다.",
     tip: "매달 2만~50만원 아무 금액이나 넣어도 '납입 회차'는 똑같이 1회예요. 없으면 지금 만드는 게 이득.",
-    field: { key: "subscriptionMonths", input: "number", unit: "년", scale: 12, placeholder: "예: 4" },
+    field: { key: "subscriptionMonths", input: "stepper", unit: "년", scale: 12, min: 0, max: 30, step: 1, default: 0 },
   },
   {
     id: "dependents",
@@ -148,7 +217,7 @@ export const CARD_DECK = [
     title: "부양가족은 몇 명인가요?",
     body: "같은 등본에서 내가 부양하는 배우자·자녀·부모 수예요. 본인은 빼고 세요.",
     tip: "부모님은 신청일 기준 3년 이상 같은 등본에 있어야 인정돼요. 청약 가점에서 1명당 5점.",
-    field: { key: "dependents", input: "number", unit: "명", scale: 1, placeholder: "예: 1" },
+    field: { key: "dependents", input: "stepper", unit: "명", scale: 1, min: 0, max: 8, step: 1, default: 0 },
   },
 
   {
@@ -168,7 +237,24 @@ export const CARD_DECK = [
     title: "관심 매물의 공시가격을 아나요?",
     body: "모르면 건너뛰어도 돼요. 대략 목표 집값의 70% 정도로 잡아도 감은 잡혀요.",
     tip: "'부동산공시가격알리미(realtyprice.kr)'에서 단지·동·호를 넣으면 공동주택 공시가격이 나와요.",
-    field: { key: "officialPrice", input: "number", unit: "억원", scale: 100000000, step: 0.1, placeholder: "예: 5.6", optional: true },
+    field: {
+      key: "officialPrice",
+      input: "chips",
+      unit: "억원",
+      scale: 100_000_000,
+      step: 0.1,
+      allowCustom: true,
+      optional: true,
+      placeholder: "예: 5.6",
+      options: [
+        { label: "3억", value: 300_000_000 },
+        { label: "4억", value: 400_000_000 },
+        { label: "5억", value: 500_000_000 },
+        { label: "6억", value: 600_000_000 },
+        { label: "7억", value: 700_000_000 },
+        { label: "8억", value: 800_000_000 },
+      ],
+    },
   },
 ];
 
