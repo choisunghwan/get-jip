@@ -43,7 +43,7 @@ export default function ProgressStats({ progress, statuses, pipeline, onOpenCard
       )}
 
       <div className="btn-row">
-        <button className="btn primary" onClick={() => onOpenCard(0)}>이어서 입력하기</button>
+        <button className="btn" onClick={() => onOpenCard(0)}>차근차근 배우며 채우기</button>
         <button className="btn ghost" style={{ flex: "0 0 auto" }} onClick={onReset}>초기화</button>
       </div>
     </div>

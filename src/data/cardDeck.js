@@ -263,3 +263,15 @@ export const DECK_INDEX_BY_NODE = CARD_DECK.reduce((acc, step, i) => {
   if (step.nodeId) acc[step.nodeId] = i;
   return acc;
 }, {});
+
+/** nodeId -> fact 카드의 field 스펙 (노드 탭 인라인 편집에 재사용) */
+export const FIELD_BY_NODE = CARD_DECK.reduce((acc, step) => {
+  if (step.type === "fact" && step.nodeId) acc[step.nodeId] = step.field;
+  return acc;
+}, {});
+
+/** 3탭 퀵스타트: 가장 개인적이고 기본값으로 못 때우는 3개만 */
+export const QUICK_START = ["first_time_buyer", "annual_income", "target_price"].map((nid) => {
+  const step = CARD_DECK.find((s) => s.nodeId === nid && s.type === "fact");
+  return { nodeId: nid, title: step.title, body: step.body, field: step.field };
+});

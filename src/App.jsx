@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppState } from "./hooks/useAppState.js";
 import { AREAS } from "./data/nodes.js";
 import { DECK_INDEX_BY_NODE } from "./data/cardDeck.js";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
+import QuickStart from "./components/QuickStart.jsx";
 import RuleSetSwitcher from "./components/RuleSetSwitcher.jsx";
 import ProgressStats from "./components/ProgressStats.jsx";
 import WritingPractice from "./components/WritingPractice.jsx";
@@ -15,10 +16,9 @@ export default function App() {
   const [modal, setModal] = useState(null); // {type:'card', startIndex} | {type:'practice', practiceId}
   const [areaFilter, setAreaFilter] = useState(null);
 
-  // 첫 방문: 이름 입력부터 카드 덱을 연다
-  useEffect(() => {
-    if (!state.onboarded && !modal) setModal({ type: "card", startIndex: 0 });
-  }, [state.onboarded, modal]);
+  if (!state.onboarded) {
+    return <QuickStart state={state} actions={actions} />;
+  }
 
   const openCardForNode = (nodeId) => {
     const i = DECK_INDEX_BY_NODE[nodeId];
@@ -74,6 +74,7 @@ export default function App() {
               statuses={statuses}
               onSelect={setSelectedId}
               onLearn={(id) => actions.markLearned(id)}
+              onSetFact={(key, v) => actions.setFact(key, v)}
               onOpenCard={openCardForNode}
               onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
               onClose={() => setSelectedId(null)}
@@ -95,7 +96,7 @@ export default function App() {
                 onReset={actions.reset}
               />
               <p className="muted">
-                그래프에서 노드를 눌러 개념을 배우고, 빈 노드는 '관련 카드로' 답하세요.
+                그래프에서 회색 노드를 누르면 그 자리에서 값을 입력할 수 있어요.
                 규칙셋을 바꾸면 영향받는 노드가 흔들리며 다시 계산됩니다.
               </p>
             </>
