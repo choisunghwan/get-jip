@@ -1,0 +1,22 @@
+{
+  "name": "seonghwan-house",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "성환이 집 구하기 — 뇌처럼 얽힌 지식 그래프 + 재계산 엔진 + 카드 UX MVP",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "verify": "node src/engine/verify.js"
+  },
+  "dependencies": {
+    "d3-force": "^3.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.8"
+  }
+}
