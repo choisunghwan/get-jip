@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { won } from "../lib/format.js";
 
 // 공용 입력 위젯. cardDeck 의 field 스펙 하나를 받아 렌더.
@@ -138,5 +138,40 @@ export default function FactField({ field, value, onChange }) {
       />
       {field.unit && <span className="unit">{field.unit}</span>}
     </div>
+  );
+}
+
+// 저장 버튼까지 포함한 인라인 편집기. 결정적 선택은 즉시 커밋, 다이얼은 '저장'.
+export function InlineFactField({ field, value, onCommit }) {
+  const [pending, setPending] = useState(undefined);
+  useEffect(() => setPending(undefined), [value]);
+  const dirty = pending !== undefined && pending !== value;
+  return (
+    <>
+      <FactField
+        field={field}
+        value={pending !== undefined ? pending : value}
+        onChange={(v, decisive) => {
+          if (decisive) {
+            setPending(undefined);
+            onCommit(v);
+          } else {
+            setPending(v);
+          }
+        }}
+      />
+      {dirty && (
+        <button
+          className="btn primary"
+          style={{ width: "100%", marginTop: 8 }}
+          onClick={() => {
+            onCommit(pending);
+            setPending(undefined);
+          }}
+        >
+          저장
+        </button>
+      )}
+    </>
   );
 }

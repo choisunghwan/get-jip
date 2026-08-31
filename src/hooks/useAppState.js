@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { calculate } from "../engine/calculate.js";
 import { RULE_SETS, DEFAULT_RULE_SET_VERSION, getRuleSet } from "../data/ruleSets.js";
-import { NODES } from "../data/nodes.js";
+import { NODES, NODE_BY_ID } from "../data/nodes.js";
+import { JOURNEY } from "../data/journey.js";
 import { loadState, saveState, clearState } from "../lib/storage.js";
 import { deltaLabel } from "../lib/format.js";
 
@@ -12,6 +13,9 @@ const DEFAULT_STATE = {
   learned: {}, // { [nodeId]: true }
   practice: {}, // { [nodeId]: { [fieldKey]: value } }
   ruleSetVersion: DEFAULT_RULE_SET_VERSION,
+  currentStep: "step1",
+  stepsDone: {}, // { [stepId]: true }  사용자가 "이 단계 완료" 누른 것
+  stepTodos: {}, // { [stepId]: { [idx]: true } }  할 일 체크
 };
 
 const DECAY_MS = 2600; // 재계산 흔들림 지속 시간
@@ -69,6 +73,23 @@ export function useAppState() {
     };
   }, [statuses]);
 
+  // 단계별 진행: 입력칸(fact 노드) 채움 비율 + 완료 여부
+  const stepProgress = useMemo(() => {
+    const m = {};
+    for (const step of JOURNEY) {
+      const factNodes = step.nodeIds.filter((id) => NODE_BY_ID[id]?.value?.source === "fact");
+      const filled = factNodes.filter((id) => statuses[id] === "hasValue").length;
+      const inputsReady = factNodes.length === 0 || filled === factNodes.length;
+      m[step.id] = {
+        factTotal: factNodes.length,
+        filled,
+        inputsReady,
+        done: !!state.stepsDone[step.id],
+      };
+    }
+    return m;
+  }, [statuses, state.stepsDone]);
+
   // ── actions ──
   const setUserName = useCallback((userName) => {
     setState((s) => ({ ...s, userName: userName?.trim() || s.userName }));
@@ -120,6 +141,28 @@ export function useAppState() {
 
   const dismissDeltas = useCallback(() => setDeltas({}), []);
 
+  const setCurrentStep = useCallback((stepId) => {
+    setState((s) => (s.currentStep === stepId ? s : { ...s, currentStep: stepId }));
+  }, []);
+
+  const toggleStepDone = useCallback((stepId) => {
+    setState((s) => {
+      const next = { ...s.stepsDone };
+      if (next[stepId]) delete next[stepId];
+      else next[stepId] = true;
+      return { ...s, stepsDone: next };
+    });
+  }, []);
+
+  const toggleStepTodo = useCallback((stepId, idx) => {
+    setState((s) => {
+      const cur = { ...(s.stepTodos[stepId] || {}) };
+      if (cur[idx]) delete cur[idx];
+      else cur[idx] = true;
+      return { ...s, stepTodos: { ...s.stepTodos, [stepId]: cur } };
+    });
+  }, []);
+
   const reset = useCallback(() => {
     clearState();
     setState({ ...DEFAULT_STATE });
@@ -135,6 +178,7 @@ export function useAppState() {
     pipeline,
     statuses,
     progress,
+    stepProgress,
     deltas,
     shakeSeq,
     actions: {
@@ -145,6 +189,9 @@ export function useAppState() {
       setPractice,
       switchRuleSet,
       dismissDeltas,
+      setCurrentStep,
+      toggleStepDone,
+      toggleStepTodo,
       reset,
     },
   };

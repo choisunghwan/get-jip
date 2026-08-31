@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { NODES, NODE_BY_ID, AREAS } from "../data/nodes.js";
 import { EDGES, EDGES_BY_NODE } from "../data/edges.js";
 import { useForceSimulation } from "../hooks/useForceSimulation.js";
@@ -7,6 +8,7 @@ import { resolveNodeValue } from "../hooks/useAppState.js";
 
 const R = 21;
 const MOVE_THRESHOLD = 4;
+const POP = { type: "spring", stiffness: 260, damping: 16 };
 
 export default function BrainGraph({
   state,
@@ -16,7 +18,7 @@ export default function BrainGraph({
   shakeSeq,
   selectedId,
   onSelect,
-  areaFilter,
+  highlightIds, // Set<nodeId> | null — 이 노드들만 밝히고 나머지는 흐리게(숨기지 않음)
 }) {
   const wrapRef = useRef(null);
   const [size, setSize] = useState({ w: 800, h: 600 });
@@ -153,7 +155,22 @@ export default function BrainGraph({
     return new Set([selectedId, ...(EDGES_BY_NODE[selectedId] || [])]);
   }, [selectedId]);
 
-  const visibleArea = (area) => !areaFilter || areaFilter === area;
+  // 선택이 있으면 이웃 강조가 우선, 없으면 highlightIds(STEP 포커스) 적용
+  const focusSet = neighborSet || highlightIds || null;
+  const isDim = (id) => !!focusSet && !focusSet.has(id);
+
+  // STEP 포커스가 바뀌면 해당 노드들로 화면 이동
+  useEffect(() => {
+    if (!highlightIds || selectedId) return;
+    const pts = [...highlightIds].map((id) => positions[id]).filter(Boolean);
+    if (pts.length < 2) return;
+    const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+    const minX = Math.min(...xs) - 90, maxX = Math.max(...xs) + 90;
+    const minY = Math.min(...ys) - 90, maxY = Math.max(...ys) + 90;
+    const k = Math.min(1.8, Math.max(0.5, Math.min(size.w / (maxX - minX), size.h / (maxY - minY))));
+    setView({ k, tx: (size.w - (maxX + minX) * k) / 2, ty: (size.h - (maxY + minY) * k) / 2 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highlightIds]);
 
   return (
     <div ref={wrapRef} className="graph-pane">
@@ -173,9 +190,8 @@ export default function BrainGraph({
             const a = positions[e.from];
             const b = positions[e.to];
             if (!a || !b) return null;
-            if (!visibleArea(NODE_BY_ID[e.from].area) && !visibleArea(NODE_BY_ID[e.to].area)) return null;
-            const active = neighborSet && (neighborSet.has(e.from) && neighborSet.has(e.to));
-            const dim = neighborSet && !active;
+            const both = focusSet && focusSet.has(e.from) && focusSet.has(e.to);
+            const dim = focusSet && !both;
             return (
               <line
                 key={i}
@@ -184,9 +200,9 @@ export default function BrainGraph({
                 x2={b.x}
                 y2={b.y}
                 stroke={e.cross ? "#63809e" : "#2f4359"}
-                strokeWidth={active ? 2.2 : e.cross ? 1.3 : 1}
+                strokeWidth={both ? 2.2 : e.cross ? 1.3 : 1}
                 strokeDasharray={e.cross ? "5 4" : undefined}
-                opacity={dim ? 0.12 : e.cross ? 0.7 : 0.55}
+                opacity={dim ? 0.1 : e.cross ? 0.7 : 0.55}
               />
             );
           })}
@@ -195,11 +211,10 @@ export default function BrainGraph({
           {NODES.map((n) => {
             const p = positions[n.id];
             if (!p) return null;
-            if (!visibleArea(n.area)) return null;
             const status = statuses[n.id];
             const area = AREAS[n.area];
             const selected = n.id === selectedId;
-            const dim = neighborSet && !neighborSet.has(n.id);
+            const dim = isDim(n.id);
             const shaking = shakeSeq > 0 && deltas[n.id];
             const rawVal = resolveNodeValue(n, state.facts, pipeline);
             const showVal = status === "hasValue" && n.value;
@@ -223,42 +238,63 @@ export default function BrainGraph({
 
             return (
               <g
-                key={shaking ? `${n.id}-${shakeSeq}` : n.id}
-                className={`node-g${shaking ? " shaking" : ""}`}
+                key={n.id}
+                className="node-g"
                 transform={`translate(${p.x},${p.y})`}
-                opacity={dim ? 0.28 : 1}
                 onPointerDown={(e) => onNodePointerDown(e, n.id)}
                 onPointerUp={(e) => onNodePointerUp(e, n.id)}
               >
-                {selected && (
-                  <circle r={R + 7} fill="none" stroke={area.color} strokeWidth={2} opacity={0.6} />
-                )}
-                <circle
-                  r={status === "hasValue" ? R + 1 : R}
-                  fill={fill}
-                  stroke={stroke}
-                  strokeWidth={status === "unlearned" ? 1.5 : 2.2}
-                  strokeDasharray={strokeDash}
-                  opacity={status === "unlearned" ? 0.6 : 1}
-                />
-                <text
-                  className="node-label"
-                  y={R + 14}
-                  textAnchor="middle"
-                  fill={dim ? "var(--dim)" : "var(--text)"}
+                <motion.g
+                  initial={false}
+                  style={{ opacity: 1 }}
+                  animate={{
+                    opacity: dim ? 0.22 : 1,
+                    x: shaking ? [0, -3, 3, -2, 2, 0] : 0,
+                  }}
+                  transition={{ opacity: { duration: 0.25 }, x: { duration: 0.5 } }}
                 >
-                  {n.label}
-                </text>
-                {valStr && (
-                  <text className="node-value" y={4} textAnchor="middle" fill={textFill}>
-                    {valStr.length > 9 ? valStr.replace("원", "") : valStr}
+                  {selected && (
+                    <circle r={R + 7} fill="none" stroke={area.color} strokeWidth={2} opacity={0.6} />
+                  )}
+                  <motion.circle
+                    key={status}
+                    initial={{ scale: status === "hasValue" ? 0.4 : 1 }}
+                    animate={{ scale: 1 }}
+                    transition={POP}
+                    r={status === "hasValue" ? R + 1 : R}
+                    fill={fill}
+                    stroke={stroke}
+                    strokeWidth={status === "unlearned" ? 1.5 : 2.2}
+                    strokeDasharray={strokeDash}
+                    opacity={status === "unlearned" ? 0.6 : 1}
+                  />
+                  <text
+                    className="node-label"
+                    y={R + 14}
+                    textAnchor="middle"
+                    fill={dim ? "var(--dim)" : "var(--text)"}
+                  >
+                    {n.label}
                   </text>
-                )}
-                {shakeSeq > 0 && deltas[n.id] && (
-                  <text className="delta-badge" y={-R - 8} textAnchor="middle">
-                    {deltas[n.id]}
-                  </text>
-                )}
+                  {valStr && (
+                    <motion.text
+                      key={valStr}
+                      className="node-value"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 4 }}
+                      transition={{ duration: 0.3 }}
+                      textAnchor="middle"
+                      fill={textFill}
+                    >
+                      {valStr.length > 9 ? valStr.replace("원", "") : valStr}
+                    </motion.text>
+                  )}
+                  {shakeSeq > 0 && deltas[n.id] && (
+                    <text className="delta-badge" y={-R - 8} textAnchor="middle">
+                      {deltas[n.id]}
+                    </text>
+                  )}
+                </motion.g>
               </g>
             );
           })}

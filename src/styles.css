@@ -391,3 +391,77 @@ input, select, textarea {
   line-height: 1.6;
 }
 .warn-box b { color: var(--warn); }
+
+/* ── step rail ── */
+.step-rail {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+}
+.step-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px 7px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--panel);
+  color: var(--dim);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.step-chip.active {
+  color: var(--text);
+  border-color: var(--glow);
+  background: rgba(79, 209, 165, 0.1);
+}
+.step-chip .step-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--panel-soft);
+  color: var(--dim);
+  flex-shrink: 0;
+}
+.step-chip.step-ready .step-dot { background: rgba(255, 203, 107, 0.2); color: var(--accent); }
+.step-chip.step-done .step-dot { background: var(--glow); color: #0f1720; }
+.step-chip .step-name { font-weight: 600; }
+.step-chip .step-frac { font-size: 10.5px; color: var(--dim); font-weight: 700; }
+
+/* ── todo rows ── */
+.todo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.todo-row:last-of-type { border-bottom: none; }
+.todo-box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: var(--glow);
+  margin-top: 1px;
+}
+.todo-box.on { border-color: var(--glow); background: rgba(79, 209, 165, 0.14); }

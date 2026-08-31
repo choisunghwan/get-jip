@@ -26,8 +26,13 @@ npm run build     # 프로덕션 빌드
 | 규칙셋 전환 → 영향받는 노드 흔들림 + 변화량(▼0.5억) 배지 | [src/hooks/useAppState.js](src/hooks/useAppState.js) `switchRuleSet`, [src/components/RuleSetSwitcher.jsx](src/components/RuleSetSwitcher.jsx) |
 | 완성도 % (미학습/배움/내값있음 비율) | [src/components/ProgressStats.jsx](src/components/ProgressStats.jsx) |
 | 작성 연습 — 등기부등본·특약사항·전세보증보험 미니 양식 + "왜 봐야 하는지" | [src/components/WritingPractice.jsx](src/components/WritingPractice.jsx), [src/data/writingPractice.js](src/data/writingPractice.js) |
-| 온보딩 이름 입력 → "OO이 집 구하기" 개인화 | [src/components/CardFlow.jsx](src/components/CardFlow.jsx) name 스텝 |
+| 온보딩 이름 입력 → "OO이 집 구하기" 개인화 | [src/components/QuickStart.jsx](src/components/QuickStart.jsx) — 3탭(생애최초·소득·목표집값)만 받고 바로 그래프 |
 | "연습장입니다 / 최종 확정은 은행·전문가와" 상시 안내 | 화면 하단 disclaimer + 연습 모달 상단 note |
+| STEP 레일 — 실제 집 구하는 7단계 순서 | [src/data/journey.js](src/data/journey.js), [src/components/StepRail.jsx](src/components/StepRail.jsx), [src/components/StepPanel.jsx](src/components/StepPanel.jsx) |
+| 단계별 할 일 체크 + "이 단계 완료" | [src/components/StepPanel.jsx](src/components/StepPanel.jsx), useAppState `stepsDone`/`stepTodos` |
+| 집 짓기 애니메이션 — STEP 완료마다 집 부위 조립 | [src/components/HouseProgress.jsx](src/components/HouseProgress.jsx) (framer-motion) |
+| 노드 탭 인라인 편집 (마법사 안 거침) | [src/components/FactField.jsx](src/components/FactField.jsx) `InlineFactField`, [src/components/NodeDetail.jsx](src/components/NodeDetail.jsx) |
+| 그래프 모션 — 노드 채움 팝, 재계산 흔들림, 영역 5엽 군집 | [src/components/BrainGraph.jsx](src/components/BrainGraph.jsx), [src/hooks/useForceSimulation.js](src/hooks/useForceSimulation.js) |
 
 ### 데이터 흐름
 
@@ -61,6 +66,14 @@ MVP는 `localStorage` ([src/lib/storage.js](src/lib/storage.js)). `loadState()` 
 
 `reference/homebuying-brain-pipeline.jsx` — 재계산 엔진 원형 (데모 #4). 최종 엔진은 이걸 5영역 그래프로 일반화한 것.
 
+## STEP (실제 집 구하는 순서)
+
+1. 얼마짜리 집이 가능한가 (자금 파악) → 2. 종잣돈 계획 → 3. 어디서 살까 (지역·매물) →
+4. 청약 노려보기 → 5. 대출 확정 준비 → 6. 계약 → 7. 잔금·등기·입주
+
+각 STEP은 그래프의 한 묶음 노드를 밝히고, 옆 패널에 그 단계의 입력칸 + 배울 개념 + 앱 밖 할 일 체크리스트를 보여준다.
+"이 단계 완료"를 누르면 [HouseProgress](src/components/HouseProgress.jsx)의 집 부위가 조립된다(기초→벽→지붕→창문→문→울타리→열쇠).
+
 ## 스택
 
-React 18 (Vite) · d3-force · localStorage(→ Supabase) · Vercel 배포 대상
+React 18 (Vite) · d3-force · framer-motion · localStorage(→ Supabase) · Vercel 배포 대상

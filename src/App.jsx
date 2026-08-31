@@ -1,28 +1,42 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAppState } from "./hooks/useAppState.js";
-import { AREAS } from "./data/nodes.js";
 import { DECK_INDEX_BY_NODE } from "./data/cardDeck.js";
+import { JOURNEY_BY_ID } from "./data/journey.js";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
 import QuickStart from "./components/QuickStart.jsx";
+import StepRail from "./components/StepRail.jsx";
+import StepPanel from "./components/StepPanel.jsx";
+import HouseProgress from "./components/HouseProgress.jsx";
 import RuleSetSwitcher from "./components/RuleSetSwitcher.jsx";
 import ProgressStats from "./components/ProgressStats.jsx";
 import WritingPractice from "./components/WritingPractice.jsx";
 
 export default function App() {
-  const { state, ruleSets, pipeline, statuses, progress, deltas, shakeSeq, actions } = useAppState();
+  const { state, ruleSets, pipeline, statuses, progress, stepProgress, deltas, shakeSeq, actions } =
+    useAppState();
   const [selectedId, setSelectedId] = useState(null);
-  const [modal, setModal] = useState(null); // {type:'card', startIndex} | {type:'practice', practiceId}
-  const [areaFilter, setAreaFilter] = useState(null);
+  const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
+  const [focusAll, setFocusAll] = useState(false);
+
+  const highlightIds = useMemo(() => {
+    if (focusAll) return null;
+    const step = JOURNEY_BY_ID[state.currentStep];
+    return step && step.nodeIds.length ? new Set(step.nodeIds) : null;
+  }, [focusAll, state.currentStep]);
 
   if (!state.onboarded) {
     return <QuickStart state={state} actions={actions} />;
   }
 
   const openCardForNode = (nodeId) => {
-    const i = DECK_INDEX_BY_NODE[nodeId];
-    setModal({ type: "card", startIndex: i ?? 0 });
+    setModal({ type: "card", startIndex: DECK_INDEX_BY_NODE[nodeId] ?? 0 });
+  };
+
+  const gotoStep = (id) => {
+    setSelectedId(null);
+    actions.setCurrentStep(id);
   };
 
   return (
@@ -30,28 +44,14 @@ export default function App() {
       <header className="app-header">
         <div>
           <h1>{state.userName}이 집 구하기</h1>
-          <p className="sub">뇌처럼 얽힌 개념 그래프 · 아는 것만 답하면 계산돼요</p>
+          <p className="sub">실제 집 구하는 순서대로 · 아는 것만 답하면 계산돼요</p>
         </div>
-        <div className="chip-row" style={{ marginTop: 0 }}>
-          <button
-            className="chip"
-            style={{ borderColor: !areaFilter ? "var(--glow)" : "var(--line)" }}
-            onClick={() => setAreaFilter(null)}
-          >
-            전체
-          </button>
-          {Object.values(AREAS).map((a) => (
-            <button
-              key={a.key}
-              className="chip"
-              style={{ borderColor: areaFilter === a.key ? a.color : "var(--line)" }}
-              onClick={() => setAreaFilter(areaFilter === a.key ? null : a.key)}
-            >
-              {a.emoji} {a.label}
-            </button>
-          ))}
-        </div>
+        <button className="chip" onClick={() => setFocusAll((v) => !v)}>
+          {focusAll ? "🧠 전체 보기" : "🎯 이 단계만"}
+        </button>
       </header>
+
+      <StepRail current={state.currentStep} stepProgress={stepProgress} onSelect={gotoStep} />
 
       <div className="app-body">
         <BrainGraph
@@ -62,7 +62,7 @@ export default function App() {
           shakeSeq={shakeSeq}
           selectedId={selectedId}
           onSelect={setSelectedId}
-          areaFilter={areaFilter}
+          highlightIds={highlightIds}
         />
 
         <aside className="side-pane">
@@ -81,6 +81,15 @@ export default function App() {
             />
           ) : (
             <>
+              <HouseProgress stepProgress={stepProgress} />
+              <StepPanel
+                stepId={state.currentStep}
+                state={state}
+                statuses={statuses}
+                stepProg={stepProgress}
+                actions={actions}
+                onSelectNode={setSelectedId}
+              />
               <RuleSetSwitcher
                 ruleSets={ruleSets}
                 current={state.ruleSetVersion}
@@ -95,10 +104,6 @@ export default function App() {
                 onOpenCard={(startIndex) => setModal({ type: "card", startIndex })}
                 onReset={actions.reset}
               />
-              <p className="muted">
-                그래프에서 회색 노드를 누르면 그 자리에서 값을 입력할 수 있어요.
-                규칙셋을 바꾸면 영향받는 노드가 흔들리며 다시 계산됩니다.
-              </p>
             </>
           )}
         </aside>
@@ -117,7 +122,6 @@ export default function App() {
           onClose={() => setModal(null)}
         />
       )}
-
       {modal?.type === "practice" && (
         <WritingPractice
           practiceId={modal.practiceId}
