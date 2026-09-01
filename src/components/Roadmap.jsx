@@ -21,6 +21,11 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
         <p className="road-sub">
           {allDone ? "큰 그림은 다 봤어요. 실제 진행은 전문가와 확인하세요." : "순서대로 하나씩 하면 돼요. 지금 할 일부터 시작하세요."}
         </p>
+        <div className="road-legend">
+          <span><i className="rl-dot rl-done" /> 완료</span>
+          <span><i className="rl-dot rl-current" /> 지금 할 단계</span>
+          <span><i className="rl-dot rl-upcoming" /> 아직</span>
+        </div>
       </div>
 
       <div className="road-list">
@@ -38,7 +43,9 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
                 <div className="rs-dot" style={done || current ? { background: done ? s.color : "transparent", borderColor: s.color, color: done ? "#fff" : s.color } : undefined}>
                   {done ? <Icon name="check" size={15} strokeWidth={3} /> : s.num}
                 </div>
-                {i < JOURNEY.length - 1 && <div className="rs-line" style={done ? { background: s.color } : undefined} />}
+                {i < JOURNEY.length - 1 && (
+                  <div className={`rs-line${done ? " on" : ""}`} style={done ? { background: s.color } : undefined} />
+                )}
               </div>
               <button className="rs-body" onClick={() => onOpenStep(s.id, { toReport: done })}>
                 <div className="rs-head">

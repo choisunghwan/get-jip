@@ -578,10 +578,32 @@ input, select, textarea {
   font-size: 14px;
   color: var(--dim);
 }
-.rs-line { width: 2px; flex: 1; min-height: 14px; background: var(--line); margin: 3px 0; }
+.rs-line {
+  width: 2px;
+  flex: 1;
+  min-height: 14px;
+  margin: 3px 0;
+  border-radius: 1px;
+  background-image: repeating-linear-gradient(to bottom, var(--locked) 0 4px, transparent 4px 9px);
+  background-color: transparent;
+}
+.rs-line.on { width: 3px; background-image: none; } /* background-color 는 인라인 스타일(단계 색)로 */
 .road-step.done .rs-dot { background: var(--glow); border-color: var(--glow); color: #fff; }
-.road-step.done .rs-line { background: var(--glow); }
 .road-step.current .rs-dot { border-color: var(--accent); color: var(--accent); }
+
+.road-legend {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--dim);
+}
+.road-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.rl-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.rl-dot.rl-done { background: var(--glow); }
+.rl-dot.rl-current { background: transparent; border: 2px solid var(--accent); }
+.rl-dot.rl-upcoming { background: transparent; border: 1.5px dashed var(--locked); }
 
 .rs-body {
   flex: 1;
