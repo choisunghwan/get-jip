@@ -295,6 +295,8 @@ export default function BrainGraph({
                   }}
                   transition={{ opacity: { duration: 0.25 }, x: { duration: 0.5 } }}
                 >
+                  {/* 투명 히트 영역 — fill="none" 원은 가운데를 못 눌러서 */}
+                  <circle r={R + 10} fill="transparent" />
                   {selected && (
                     <circle r={R + 7} fill="none" stroke={area.color} strokeWidth={2} opacity={0.6} />
                   )}
