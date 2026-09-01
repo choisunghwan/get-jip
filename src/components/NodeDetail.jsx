@@ -132,7 +132,7 @@ export default function NodeDetail({
                   style={{ "--c": nbArea.color }}
                   onClick={() => onSelect(id)}
                 >
-                  <span className="areadot" style={{ background: nbArea.color }} /> {nb.label}
+                  {nb.label}
                 </button>
               );
             })}

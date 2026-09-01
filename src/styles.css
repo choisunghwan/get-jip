@@ -349,18 +349,12 @@ input, select, textarea {
 
 /* 영역 색 태그 */
 .chip.area {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  line-height: 1;
   border-color: var(--c);
   color: var(--c);
   background: transparent;
 }
-.chip.area .areadot { vertical-align: 0; }
 .chip.area.chip-unlearned { opacity: 0.5; border-style: dashed; }
 .chip.area.chip-hasValue { background: var(--c); color: #fff; }
-.chip.area.chip-hasValue .areadot { background: #fff; }
 
 .chip-ico { display: inline-flex; align-items: center; gap: 4px; }
 

@@ -64,11 +64,11 @@ export default function StepPanel({ stepId, state, statuses, stepProg, actions, 
               return (
                 <button
                   key={id}
-                  className={`chip${st === "unlearned" ? "" : " selected"}`}
-                  style={st === "unlearned" ? undefined : { borderColor: a.color, color: a.color, background: "transparent" }}
+                  className={`chip area chip-${st}`}
+                  style={{ "--c": a.color }}
                   onClick={() => onSelectNode(id)}
                 >
-                  <span className="areadot" style={{ background: a.color }} /> {node.label}
+                  {node.label}
                 </button>
               );
             })}
