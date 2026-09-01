@@ -9,6 +9,9 @@ import { resolveNodeValue } from "../hooks/useAppState.js";
 const R = 21;
 const MOVE_THRESHOLD = 4;
 const POP = { type: "spring", stiffness: 260, damping: 16 };
+const MIN_K = 0.5;
+const MAX_K = 2.4;
+const WORLD_PAD = 40; // 노드 바깥 여백(월드 단위)
 
 export default function BrainGraph({
   state,
@@ -36,6 +39,42 @@ export default function BrainGraph({
 
   const { positions, dragControls, reheat } = useForceSimulation(NODES, EDGES, size.w, size.h);
 
+  // 노드 전체를 감싸는 월드 좌표 박스
+  const bounds = useMemo(() => {
+    const pts = Object.values(positions);
+    if (!pts.length) return null;
+    const xs = pts.map((p) => p.x);
+    const ys = pts.map((p) => p.y);
+    return {
+      minX: Math.min(...xs) - WORLD_PAD,
+      maxX: Math.max(...xs) + WORLD_PAD,
+      minY: Math.min(...ys) - WORLD_PAD,
+      maxY: Math.max(...ys) + WORLD_PAD,
+    };
+  }, [positions]);
+
+  // view 를 범위 안으로 제한 (무한 팬/줌 방지).
+  // 규칙: 화면 중앙점이 항상 노드 박스 안(또는 살짝 안쪽)에 있어야 한다
+  //  → 그래프를 절대 잃어버리지 않으면서, 아무 노드나 중앙에 가져올 수 있음.
+  const clampView = useCallback(
+    (v) => {
+      const k = Math.min(MAX_K, Math.max(MIN_K, v.k));
+      let { tx, ty } = v;
+      if (bounds) {
+        const mx = Math.min(size.w, (bounds.maxX - bounds.minX) * k) * 0.2;
+        const my = Math.min(size.h, (bounds.maxY - bounds.minY) * k) * 0.2;
+        tx = Math.min(size.w / 2 - mx - bounds.minX * k, Math.max(size.w / 2 + mx - bounds.maxX * k, tx));
+        ty = Math.min(size.h / 2 - my - bounds.minY * k, Math.max(size.h / 2 + my - bounds.maxY * k, ty));
+      }
+      return { tx, ty, k };
+    },
+    [bounds, size]
+  );
+  const setViewClamped = useCallback(
+    (next) => setView((v) => clampView(typeof next === "function" ? next(v) : next)),
+    [clampView]
+  );
+
   // 화면 좌표 -> 월드 좌표
   const toWorld = useCallback(
     (clientX, clientY) => {
@@ -60,7 +99,7 @@ export default function BrainGraph({
     if (!start) return;
     const dx = e.clientX - start.x;
     const dy = e.clientY - start.y;
-    setView((v) => ({ ...v, tx: start.tx + dx, ty: start.ty + dy }));
+    setViewClamped((v) => ({ ...v, tx: start.tx + dx, ty: start.ty + dy }));
   };
   const onSvgPointerUp = (e) => {
     panRef.current = null;
@@ -72,7 +111,7 @@ export default function BrainGraph({
     const rect = wrapRef.current.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-    setView((v) => {
+    setViewClamped((v) => {
       const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
       const k = Math.min(2.4, Math.max(0.4, v.k * factor));
       // 커서 기준 확대
@@ -83,7 +122,7 @@ export default function BrainGraph({
   };
 
   const zoomBy = (factor) =>
-    setView((v) => {
+    setViewClamped((v) => {
       const k = Math.min(2.4, Math.max(0.4, v.k * factor));
       const cx = size.w / 2;
       const cy = size.h / 2;
@@ -105,7 +144,7 @@ export default function BrainGraph({
     const minY = Math.min(...ys) - 60;
     const maxY = Math.max(...ys) + 60;
     const k = Math.min(2.2, Math.max(0.4, Math.min(size.w / (maxX - minX), size.h / (maxY - minY))));
-    setView({
+    setViewClamped({
       k,
       tx: (size.w - (maxX + minX) * k) / 2,
       ty: (size.h - (maxY + minY) * k) / 2,
@@ -167,7 +206,7 @@ export default function BrainGraph({
     const minX = Math.min(...xs) - 90, maxX = Math.max(...xs) + 90;
     const minY = Math.min(...ys) - 90, maxY = Math.max(...ys) + 90;
     const k = Math.min(1.8, Math.max(0.5, Math.min(size.w / (maxX - minX), size.h / (maxY - minY))));
-    setView({ k, tx: (size.w - (maxX + minX) * k) / 2, ty: (size.h - (maxY + minY) * k) / 2 });
+    setViewClamped({ k, tx: (size.w - (maxX + minX) * k) / 2, ty: (size.h - (maxY + minY) * k) / 2 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightIds]);
 
