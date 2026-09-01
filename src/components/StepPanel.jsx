@@ -3,6 +3,7 @@ import { JOURNEY, JOURNEY_BY_ID } from "../data/journey.js";
 import { NODE_BY_ID, AREAS } from "../data/nodes.js";
 import { FIELD_BY_NODE } from "../data/cardDeck.js";
 import { InlineFactField } from "./FactField.jsx";
+import Icon from "./Icon.jsx";
 
 export default function StepPanel({ stepId, state, statuses, stepProg, actions, onSelectNode }) {
   const step = JOURNEY_BY_ID[stepId];
@@ -39,7 +40,7 @@ export default function StepPanel({ stepId, state, statuses, stepProg, actions, 
               <div key={id} style={{ marginTop: 12 }}>
                 <label style={{ fontSize: 13, fontWeight: 700, display: "flex", justifyContent: "space-between" }}>
                   <span>{node.label}</span>
-                  {done && <span style={{ color: AREAS[node.area].color }}>✓</span>}
+                  {done && <Icon name="check" size={13} strokeWidth={3} style={{ color: AREAS[node.area].color }} />}
                 </label>
                 <InlineFactField
                   field={field}
@@ -67,7 +68,7 @@ export default function StepPanel({ stepId, state, statuses, stepProg, actions, 
                   style={st === "unlearned" ? undefined : { borderColor: a.color, color: a.color, background: "transparent" }}
                   onClick={() => onSelectNode(id)}
                 >
-                  {a.emoji} {node.label}
+                  <span className="areadot" style={{ background: a.color }} /> {node.label}
                 </button>
               );
             })}
@@ -82,7 +83,7 @@ export default function StepPanel({ stepId, state, statuses, stepProg, actions, 
           className="todo-row"
           onClick={() => actions.toggleStepTodo(stepId, i)}
         >
-          <span className={`todo-box${todos[i] ? " on" : ""}`}>{todos[i] ? "✓" : ""}</span>
+          <span className={`todo-box${todos[i] ? " on" : ""}`}>{todos[i] && <Icon name="check" size={11} strokeWidth={3} />}</span>
           <span style={{ textDecoration: todos[i] ? "line-through" : "none", opacity: todos[i] ? 0.6 : 1 }}>{t}</span>
         </button>
       ))}

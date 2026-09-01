@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { CARD_DECK } from "../data/cardDeck.js";
 import { NODE_BY_ID, AREAS } from "../data/nodes.js";
 import FactField from "./FactField.jsx";
+import Icon from "./Icon.jsx";
 
 // 선택형 가이드. "차근차근 배우며 채우기". 기본 경로는 QuickStart + 노드 탭.
 export default function CardFlow({ startIndex = 0, state, actions, onClose }) {
@@ -60,14 +61,16 @@ export default function CardFlow({ startIndex = 0, state, actions, onClose }) {
 
         {area && (
           <span className="pill" style={{ color: area.color, borderColor: area.color, marginBottom: 8 }}>
-            {area.emoji} {area.label}
+            <span className="areadot" style={{ background: area.color }} /> {area.label}
           </span>
         )}
-        {step.type === "learn" && <span className="pill" style={{ marginBottom: 8 }}>📖 개념 배우기</span>}
+        {step.type === "learn" && (
+          <span className="pill" style={{ marginBottom: 8 }}><Icon name="book" size={12} /> 개념 배우기</span>
+        )}
 
         <h2 style={{ fontSize: 18, fontWeight: 800, margin: "8px 0 8px" }}>{step.title}</h2>
         <p className="muted" style={{ fontSize: 13.5, color: "var(--text)" }}>{step.body}</p>
-        {step.tip && <div className="tip">💡 {step.tip}</div>}
+        {step.tip && <div className="tip"><Icon name="bulb" size={13} /> {step.tip}</div>}
 
         {step.type === "name" && (
           <div className="field-row">

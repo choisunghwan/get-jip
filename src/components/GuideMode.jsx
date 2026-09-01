@@ -10,6 +10,7 @@ import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
 import Roadmap from "./Roadmap.jsx";
 import LevelBadge from "./LevelBadge.jsx";
+import Icon from "./Icon.jsx";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
 export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenList, onOpenPractice }) {
@@ -159,13 +160,13 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         </button>
         <span className="gn-count">{si + 1} / {screens.length}</span>
         <button className="btn primary gn-next" onClick={goNext}>
-          {onSummary ? (JOURNEY[stepIdx + 1] ? "다음 단계 →" : "완성 🎉") : "다음 →"}
+          {onSummary ? (JOURNEY[stepIdx + 1] ? "다음 단계 →" : "완성!") : "다음 →"}
         </button>
       </div>
 
       <div className="guide-view-links">
-        <button onClick={onOpenList}>📋 전체 항목 목록</button>
-        <button onClick={onOpenMap}>🗺️ 전체 지도</button>
+        <button onClick={onOpenList}><Icon name="list" size={13} /> 전체 항목 목록</button>
+        <button onClick={onOpenMap}><Icon name="map" size={13} /> 전체 지도</button>
       </div>
     </div>
   );
@@ -183,7 +184,7 @@ function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOp
       <span className="g-kicker">{ord}번째 · 개념 {no}/{total}</span>
       <h1 className="g-title">{node.label}</h1>
       <p className="g-body">{node.desc}</p>
-      <div className="g-tip"><span>💡</span><p>{node.tip}</p></div>
+      <div className="g-tip"><Icon name="bulb" size={15} /><p>{node.tip}</p></div>
 
       {field && (
         <div className="g-ask">
@@ -198,7 +199,7 @@ function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOp
             "앞의 값을 채우면 여기에 내 숫자가 나와요."
           ) : (
             <>
-              <span className="g-result-icon">📌</span>
+              <Icon name="pin" size={15} className="g-result-icon" />
               <span>
                 {name}님은 지금 <b>{node.value.kind === "won" ? `약 ${eok(val)}` : formatValue(node.value.kind, val)}</b>
                 {node.value.kind === "won" ? "예요." : "예요."}
@@ -210,7 +211,7 @@ function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOp
 
       {node.practice && (
         <button className="btn" style={{ width: "100%", marginTop: 14 }} onClick={() => onOpenPractice(node.practice)}>
-          ✍️ 직접 연습해보기
+          <Icon name="pencil" size={13} /> 직접 연습해보기
         </button>
       )}
     </div>
@@ -224,7 +225,7 @@ function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgre
 
   return (
     <div className="g-summary">
-      <span className="g-kicker done">📋 STEP {step.num} 리포트</span>
+      <span className="g-kicker done"><Icon name="list" size={12} /> STEP {step.num} 리포트</span>
 
       {s.verdict && (
         <div className="g-verdict">
@@ -259,7 +260,7 @@ function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgre
           <p className="g-todos-title">이 단계에서 실제로 할 일</p>
           {step.todo.map((t, i) => (
             <button key={i} className="todo-row" onClick={() => actions.toggleStepTodo(step.id, i)}>
-              <span className={`todo-box${todos[i] ? " on" : ""}`}>{todos[i] ? "✓" : ""}</span>
+              <span className={`todo-box${todos[i] ? " on" : ""}`}>{todos[i] && <Icon name="check" size={11} strokeWidth={3} />}</span>
               <span style={{ textDecoration: todos[i] ? "line-through" : "none", opacity: todos[i] ? 0.55 : 1 }}>{t}</span>
             </button>
           ))}
@@ -270,7 +271,7 @@ function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgre
         <HouseProgress stepProgress={stepProgress} size={150} />
         <p className="muted" style={{ marginTop: 2 }}>
           {stepProgress[step.id]?.done
-            ? `🏠 집에 '${partKo}'이(가) 생겼어요`
+            ? `집에 '${partKo}'이(가) 생겼어요`
             : `'${hasNext ? "다음 단계" : "완성"}'을 누르면 '${partKo}'이(가) 생겨요`}
         </p>
       </div>

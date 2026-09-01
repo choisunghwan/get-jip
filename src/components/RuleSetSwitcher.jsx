@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon.jsx";
 
 // 규칙셋 전환 = 재계산 트리거. busang.gu 카드뉴스 스타일 note 노출.
 export default function RuleSetSwitcher({ ruleSets, current, onSwitch, deltas, onDismiss }) {
@@ -8,7 +9,7 @@ export default function RuleSetSwitcher({ ruleSets, current, onSwitch, deltas, o
 
   return (
     <div className="panel-box" style={{ borderColor: active?.regulatedAreas.length ? "var(--warn)" : "var(--line)" }}>
-      <p className="panel-title">📋 규제 규칙셋 — 바꾸면 내 값 전체가 다시 계산돼요</p>
+      <p className="panel-title"><Icon name="news" size={12} /> 규제 규칙셋 — 바꾸면 내 값 전체가 다시 계산돼요</p>
       <div className="btn-row" style={{ marginTop: 0 }}>
         {ruleSets.map((r) => {
           const on = r.version === current;
@@ -48,7 +49,7 @@ export default function RuleSetSwitcher({ ruleSets, current, onSwitch, deltas, o
           style={{ marginTop: 12, position: "relative" }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-            <b>📰 {active.label}</b>
+            <b><Icon name="news" size={13} /> {active.label}</b>
             <button
               className="btn ghost"
               style={{ padding: 0, fontSize: 15, color: "var(--dim)" }}

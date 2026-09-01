@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NODES, AREAS } from "../data/nodes.js";
 import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue, eok } from "../lib/format.js";
+import Icon from "./Icon.jsx";
 
 // 그래프 대신 쓰는 차분한 목록 뷰. 상단 요약 + 영역별 접이식 리스트.
 export default function ListView({ state, pipeline, statuses, onSelect, onBack, onOpenMap }) {
@@ -31,7 +32,7 @@ export default function ListView({ state, pipeline, statuses, onSelect, onBack, 
       <div className="lst-head">
         <button className="chip" onClick={onBack}>← 가이드</button>
         <span className="lst-head-title">전체 항목</span>
-        <button className="chip" onClick={onOpenMap}>🗺️ 지도</button>
+        <button className="chip chip-ico" onClick={onOpenMap}><Icon name="map" size={13} /> 지도</button>
       </div>
 
       <div className="lst-body">
@@ -53,7 +54,7 @@ export default function ListView({ state, pipeline, statuses, onSelect, onBack, 
             <section className="lst-section" key={ak}>
               <button className="lst-sec-head" onClick={() => toggle(ak)}>
                 <span className="lst-sec-name" style={{ color: area.color }}>
-                  {area.emoji} {area.label}
+                  <span className="areadot" style={{ background: area.color }} /> {area.label}
                 </span>
                 <span className="lst-sec-count">{done}/{nodes.length}</span>
                 <span className="lst-sec-caret">{isOpen ? "▾" : "▸"}</span>

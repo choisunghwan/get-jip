@@ -3,13 +3,13 @@
 // ─────────────────────────────────────────────────────────────
 
 export const LEVELS = [
-  { lv: 1, min: 0, title: "집짓기 알", emoji: "🥚" },
-  { lv: 2, min: 10, title: "종잣돈 병아리", emoji: "🐣" },
-  { lv: 3, min: 25, title: "대출 견습생", emoji: "🔑" },
-  { lv: 4, min: 45, title: "청약 도전자", emoji: "🎯" },
-  { lv: 5, min: 70, title: "임장 탐험가", emoji: "🧭" },
-  { lv: 6, min: 100, title: "계약의 달인", emoji: "📜" },
-  { lv: 7, min: 135, title: "내 집 마련 마스터", emoji: "🏆" },
+  { lv: 1, min: 0, title: "집짓기 알", icon: "egg" },
+  { lv: 2, min: 10, title: "종잣돈 병아리", icon: "chick" },
+  { lv: 3, min: 25, title: "대출 견습생", icon: "key" },
+  { lv: 4, min: 45, title: "청약 도전자", icon: "target" },
+  { lv: 5, min: 70, title: "임장 탐험가", icon: "compass" },
+  { lv: 6, min: 100, title: "계약의 달인", icon: "scroll" },
+  { lv: 7, min: 135, title: "내 집 마련 마스터", icon: "trophy" },
 ];
 
 const XP = { learned: 1, hasValue: 2, step: 8, todo: 1 };

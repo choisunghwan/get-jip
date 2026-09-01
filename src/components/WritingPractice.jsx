@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { WRITING_PRACTICE } from "../data/writingPractice.js";
+import Icon from "./Icon.jsx";
 
 // 작성 연습 — 핵심 필드만 뽑은 미니 양식. 저장값은 연습 기록일 뿐.
 export default function WritingPractice({ practiceId, state, actions, onClose }) {
@@ -22,7 +23,7 @@ export default function WritingPractice({ practiceId, state, actions, onClose })
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-          <span className="pill">✍️ 작성 연습</span>
+          <span className="pill"><Icon name="pencil" size={12} /> 작성 연습</span>
           <button className="btn ghost" style={{ padding: "2px 8px", fontSize: 18 }} onClick={onClose}>×</button>
         </div>
 
@@ -41,7 +42,7 @@ export default function WritingPractice({ practiceId, state, actions, onClose })
                 {f.label}
                 {f.optional && <span className="muted"> (선택)</span>}
               </label>
-              <p className="why">👀 {f.why}</p>
+              <p className="why"><Icon name="eye" size={12} /> {f.why}</p>
               {f.input === "bool" ? (
                 <div className="bool-row">
                   <button className={`btn${vals[f.key] === true ? " on" : ""}`} onClick={() => set(f.key, true)}>예 / 있음</button>

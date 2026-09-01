@@ -1,9 +1,10 @@
 import { NODE_BY_ID, AREAS } from "../data/nodes.js";
 import { EDGES_BY_NODE } from "../data/edges.js";
-import { FIELD_BY_NODE, DECK_INDEX_BY_NODE } from "../data/cardDeck.js";
+import { FIELD_BY_NODE } from "../data/cardDeck.js";
 import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
+import Icon from "./Icon.jsx";
 
 // 이 노드를 채우거나 바꾸는 데 필요한 입력(fact) 노드들 — 최대 2홉.
 function relatedFactIds(nodeId) {
@@ -62,14 +63,14 @@ export default function NodeDetail({
     <div className="panel-box">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <span className="pill" style={{ color: area.color, borderColor: area.color }}>
-          {area.emoji} {area.label}
+          <span className="areadot" style={{ background: area.color }} /> {area.label}
         </span>
         <button className="btn ghost" style={{ padding: "2px 8px", fontSize: 18 }} onClick={onClose}>×</button>
       </div>
 
       <h2 style={{ fontSize: 17, fontWeight: 800, margin: "10px 0 4px" }}>{node.label}</h2>
       <p className="muted" style={{ fontSize: 13, color: "var(--text)" }}>{node.desc}</p>
-      <div className="tip">💡 <b>꿀팁</b> — {node.tip}</div>
+      <div className="tip"><Icon name="bulb" size={14} /> <b>꿀팁</b> — {node.tip}</div>
 
       {/* pipeline 노드: 계산 결과 */}
       {!field && hasVal && (
@@ -96,7 +97,7 @@ export default function NodeDetail({
                 {!field && (
                   <label style={{ fontSize: 13, fontWeight: 700, display: "flex", justifyContent: "space-between" }}>
                     <span>{inode.label}</span>
-                    {filled && <span style={{ color: AREAS[inode.area].color }}>✓</span>}
+                    {filled && <Icon name="check" size={13} strokeWidth={3} style={{ color: AREAS[inode.area].color }} />}
                   </label>
                 )}
                 <InlineFactField
@@ -127,11 +128,11 @@ export default function NodeDetail({
               return (
                 <button
                   key={id}
-                  className={`chip${st === "unlearned" ? "" : " selected"}`}
-                  style={st === "unlearned" ? undefined : { borderColor: nbArea.color, color: nbArea.color, background: "transparent" }}
+                  className={`chip area chip-${st}`}
+                  style={{ "--c": nbArea.color }}
                   onClick={() => onSelect(id)}
                 >
-                  {nbArea.emoji} {nb.label}
+                  <span className="areadot" style={{ background: nbArea.color }} /> {nb.label}
                 </button>
               );
             })}
@@ -139,9 +140,15 @@ export default function NodeDetail({
         </>
       )}
 
+      {status === "learned" && !field && !hasVal && (
+        <p className="learned-note">
+          <Icon name="check" size={13} strokeWidth={3} /> 배운 개념이에요 — 그래프·목록에서 이 노드에 불이 들어와요
+        </p>
+      )}
+
       <div className="btn-row">
         {status === "unlearned" && !field && (
-          <button className="btn primary" onClick={() => onLearn(nodeId)}>이해했어요</button>
+          <button className="btn primary" onClick={() => { onLearn(nodeId); onClose(); }}>이해했어요</button>
         )}
         {node.practice && (
           <button className="btn" onClick={() => onOpenPractice(node.practice)}>연습해보기</button>

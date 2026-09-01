@@ -124,7 +124,7 @@ export default function HouseProgress({ stepProgress, size = 150 }) {
         />
       </motion.svg>
       <p className="muted" style={{ margin: "4px 0 0" }}>
-        {allDone ? "🎉 내 집 완성!" : `집 짓기 ${doneCount} / 7`}
+        {allDone ? "내 집 완성!" : `집 짓기 ${doneCount} / 7`}
       </p>
     </div>
   );

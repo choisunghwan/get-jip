@@ -24,7 +24,7 @@ export default function ProgressStats({ progress, statuses, pipeline, onOpenCard
       <div style={{ marginTop: 12 }}>
         {byArea.map((a) => (
           <div className="kv" key={a.key}>
-            <span className="k">{a.emoji} {a.label}</span>
+            <span className="k"><span className="areadot" style={{ background: a.color }} /> {a.label}</span>
             <span className="v" style={{ color: a.color }}>
               {a.done}/{a.total} <span style={{ color: "var(--dim)", fontWeight: 400 }}>내값 · 배움 {a.learned}</span>
             </span>

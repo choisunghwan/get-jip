@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAppState } from "./hooks/useAppState.js";
 import { JOURNEY_BY_ID } from "./data/journey.js";
 import LevelUpBanner from "./components/LevelUpBanner.jsx";
+import Icon from "./components/Icon.jsx";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
@@ -120,10 +121,12 @@ export default function App() {
           <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          <button className="chip" onClick={() => setFocusAll((v) => !v)}>
-            {focusAll ? "🧠 전체" : "🎯 이 단계만"}
+          <button className="chip chip-ico" onClick={() => setFocusAll((v) => !v)}>
+            <Icon name={focusAll ? "brain" : "target"} size={13} /> {focusAll ? "전체" : "이 단계만"}
           </button>
-          <button className="chip" onClick={() => setView("list")}>📋 목록</button>
+          <button className="chip chip-ico" onClick={() => setView("list")}>
+            <Icon name="list" size={13} /> 목록
+          </button>
           <button className="chip" onClick={() => setView("guide")}>← 가이드</button>
         </div>
       </header>

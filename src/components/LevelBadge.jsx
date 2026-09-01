@@ -1,16 +1,18 @@
-// full: 이모지 + LV n · 칭호 + XP 바.  compact: 🔑 LV 3
+import Icon from "./Icon.jsx";
+
+// full: 아이콘 + LV n · 칭호 + XP 바.  compact: [아이콘] LV 3
 export default function LevelBadge({ level, compact }) {
   if (compact) {
     return (
       <span className="lv-chip" title={level.title}>
-        {level.emoji} LV {level.lv}
+        <Icon name={level.icon} size={12} /> LV {level.lv}
       </span>
     );
   }
   return (
     <div className="lv-full">
       <div className="lv-full-top">
-        <span className="lv-emoji">{level.emoji}</span>
+        <Icon name={level.icon} size={20} className="lv-emoji" />
         <span className="lv-name">
           LV {level.lv} · {level.title}
         </span>

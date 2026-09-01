@@ -332,6 +332,47 @@ input, select, textarea {
   color: var(--glow);
   background: rgba(26,157,115, 0.12);
 }
+
+/* 인라인 아이콘 정렬 */
+.ico { vertical-align: -0.14em; flex-shrink: 0; }
+
+/* 영역 색 점 */
+.areadot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  vertical-align: 0.02em;
+  flex-shrink: 0;
+}
+
+/* 영역 색 태그 */
+.chip.area {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-color: var(--c);
+  color: var(--c);
+  background: transparent;
+}
+.chip.area.chip-unlearned { opacity: 0.5; border-style: dashed; }
+.chip.area.chip-hasValue { background: var(--c); color: #fff; }
+.chip.area.chip-hasValue .areadot { background: #fff; }
+
+.chip-ico { display: inline-flex; align-items: center; gap: 4px; }
+
+.learned-note {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--glow-soft);
+  color: var(--glow);
+  font-size: 12.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 .chip-row.big { gap: 8px; }
 .chip-row.big .chip {
   font-size: 14px;

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
+import Icon from "./Icon.jsx";
 
 export default function LevelUpBanner({ level, onAck }) {
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function LevelUpBanner({ level, onAck }) {
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       onClick={onAck}
     >
-      <span className="lu-emoji">{level.emoji}</span>
+      <Icon name={level.icon} size={24} className="lu-emoji" />
       <span>
         <b>레벨 업! LV {level.lv}</b>
         <span className="lu-title">{level.title}</span>

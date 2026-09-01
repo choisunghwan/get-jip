@@ -10,15 +10,15 @@
 // ─────────────────────────────────────────────────────────────
 
 export const AREAS = {
-  seed: { key: "seed", label: "종잣돈", color: "#16a34a", emoji: "🟢" },
-  apply: { key: "apply", label: "청약", color: "#2563eb", emoji: "🔵" },
-  loan: { key: "loan", label: "대출", color: "#d97706", emoji: "🟡" },
-  listing: { key: "listing", label: "매물", color: "#9333ea", emoji: "🟣" },
-  deal: { key: "deal", label: "계약", color: "#dc2626", emoji: "🔴" },
+  seed: { key: "seed", label: "종잣돈", color: "#16a34a" },
+  apply: { key: "apply", label: "청약", color: "#2563eb" },
+  loan: { key: "loan", label: "대출", color: "#d97706" },
+  listing: { key: "listing", label: "매물", color: "#9333ea" },
+  deal: { key: "deal", label: "계약", color: "#dc2626" },
 };
 
 export const NODES = [
-  // ── 🟢 종잣돈 ──
+  // ── 종잣돈 ──
   {
     id: "seed_savings",
     area: "seed",
@@ -76,7 +76,7 @@ export const NODES = [
     value: { source: "pipeline", key: "monthsToClose", kind: "months" },
   },
 
-  // ── 🔵 청약 ──
+  // ── 청약 ──
   {
     id: "first_time_buyer",
     area: "apply",
@@ -133,7 +133,7 @@ export const NODES = [
     value: { source: "fact", key: "dependents", kind: "people" },
   },
 
-  // ── 🟡 대출 ──
+  // ── 대출 ──
   {
     id: "ltv",
     area: "loan",
@@ -204,7 +204,7 @@ export const NODES = [
     tip: "이 앱은 매매를 기본으로 계산한다. 전세를 고르면 전세대출 차단 여부를 함께 본다.",
   },
 
-  // ── 🟣 매물 ──
+  // ── 매물 ──
   {
     id: "regulated_area",
     area: "listing",
@@ -250,7 +250,7 @@ export const NODES = [
     tip: "'공급면적'은 복도·계단까지 포함이라 더 크다. 세금·청약은 전용면적으로 따진다.",
   },
 
-  // ── 🔴 계약 ──
+  // ── 계약 ──
   {
     id: "acquisition_tax",
     area: "deal",

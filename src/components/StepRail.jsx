@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { JOURNEY } from "../data/journey.js";
+import Icon from "./Icon.jsx";
 
 // 실제 집 구하는 순서. 누르면 그 단계로 포커스(그래프가 해당 노드만 밝힘).
 export default function StepRail({ current, stepProgress, onSelect }) {
@@ -16,7 +17,7 @@ export default function StepRail({ current, stepProgress, onSelect }) {
             onClick={() => onSelect(s.id)}
           >
             <span className="step-dot">
-              {p.done ? "✓" : s.num}
+              {p.done ? <Icon name="check" size={12} strokeWidth={3} /> : s.num}
             </span>
             <span className="step-name">{s.title}</span>
             {p.factTotal > 0 && !p.done && (
