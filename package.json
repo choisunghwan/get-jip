@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "description": "성환이 집 구하기 — 뇌처럼 얽힌 지식 그래프 + 재계산 엔진 + 카드 UX MVP",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

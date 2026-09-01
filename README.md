@@ -84,3 +84,19 @@ MVP는 `localStorage` ([src/lib/storage.js](src/lib/storage.js)). `loadState()` 
 ## 스택
 
 React 18 (Vite) · d3-force · framer-motion · localStorage(→ Supabase) · Vercel 배포 대상
+
+## 배포 (Cloudflare Pages)
+
+정적 SPA라 빌드 산출물(`dist/`)만 올리면 된다.
+
+1. Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect to Git**
+2. `choisunghwan/get-jip` 선택
+3. 빌드 설정 (Vite 프리셋 자동):
+   - Framework preset: `Vite`
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - (Node 버전은 `.nvmrc`(20)로 고정)
+4. Save and Deploy → `get-jip.pages.dev`
+
+이후 `main` push마다 자동 배포, PR마다 프리뷰 URL.
+SPA 폴백은 `public/_redirects`(`/* /index.html 200`)로 처리.
