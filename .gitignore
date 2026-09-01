@@ -7,3 +7,5 @@ dist
 !.env.example
 .vscode/*
 !.vscode/extensions.json
+
+.wrangler
