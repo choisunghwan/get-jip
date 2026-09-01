@@ -85,18 +85,36 @@ MVP는 `localStorage` ([src/lib/storage.js](src/lib/storage.js)). `loadState()` 
 
 React 18 (Vite) · d3-force · framer-motion · localStorage(→ Supabase) · Vercel 배포 대상
 
-## 배포 (Cloudflare Pages)
+## 배포 (Cloudflare Workers + D1)
 
-정적 SPA라 빌드 산출물(`dist/`)만 올리면 된다.
+- 프론트: `dist/` 정적 자산 (Workers Static Assets)
+- API: [worker/index.js](worker/index.js) — `/api/state` GET/PUT 만 처리, 나머지는 SPA로
+- DB: **Cloudflare D1** (`user_state` 테이블에 앱 state JSON 을 user_id 별 upsert)
+- 클라이언트 신원: 로그인 붙이기 전까지 `localStorage` 에 UUID 하나 (`seonghwan-house/uid`)
 
-1. Cloudflare 대시보드 → **Workers & Pages → Create → Pages → Connect to Git**
-2. `choisunghwan/get-jip` 선택
-3. 빌드 설정 (Vite 프리셋 자동):
-   - Framework preset: `Vite`
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - (Node 버전은 `.nvmrc`(20)로 고정)
-4. Save and Deploy → `get-jip.pages.dev`
+### 최초 1회 세팅 (로컬에서)
 
-이후 `main` push마다 자동 배포, PR마다 프리뷰 URL.
-SPA 폴백은 wrangler.jsonc 의 `not_found_handling: "single-page-application"` 로 처리.
+```bash
+npx wrangler login                 # 브라우저 인증 1회
+npm run cf:db:create               # D1 생성 → database_id 출력
+#  → wrangler.jsonc 의 database_id 를 그 값으로 교체
+npm run cf:db:migrate              # 원격 D1 에 migrations/0001_init.sql 적용
+git add wrangler.jsonc && git commit -m "d1 id" && git push
+```
+
+이후 Cloudflare Workers Build 가 `npm run build` → `npx wrangler deploy` 로
+Worker + assets + D1 바인딩을 배포한다. `main` push 마다 자동.
+
+### 로컬 풀스택 실행
+
+```bash
+npm run cf:db:migrate:local        # 로컬 D1 에 스키마
+npm run cf:dev                     # 빌드 후 wrangler dev (= /api 포함)
+```
+
+`npm run dev`(Vite 단독)로도 동작하지만 `/api` 가 없어 localStorage 캐시만 쓴다.
+
+### Phase 2: 로그인
+
+`worker/index.js` 에 인증(Cloudflare Access, 또는 자체 토큰) 붙이고 `uid` 를
+`localStorage` UUID 대신 인증된 user_id 로 바꾸면 기기 간 동기화 완성.

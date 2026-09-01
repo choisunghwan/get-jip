@@ -4,7 +4,7 @@ import { RULE_SETS, DEFAULT_RULE_SET_VERSION, getRuleSet } from "../data/ruleSet
 import { NODES, NODE_BY_ID } from "../data/nodes.js";
 import { JOURNEY } from "../data/journey.js";
 import { calcXp, levelFor } from "../data/levels.js";
-import { loadState, saveState, clearState } from "../lib/storage.js";
+import { loadLocal, loadRemote, saveState, clearState } from "../lib/storage.js";
 import { deltaLabel } from "../lib/format.js";
 
 const DEFAULT_STATE = {
@@ -42,13 +42,37 @@ export function nodeStatus(node, state, pipeline) {
 }
 
 export function useAppState() {
-  const [state, setState] = useState(() => ({ ...DEFAULT_STATE, ...(loadState() || {}) }));
+  const [state, setState] = useState(() => ({ ...DEFAULT_STATE, ...(loadLocal() || {}) }));
   const [deltas, setDeltas] = useState({}); // { [nodeId]: labelString }  재계산 배지
   const [shakeSeq, setShakeSeq] = useState(0); // 흔들림 트리거(값 바뀔 때 증가)
   const decayTimer = useRef(null);
 
+  // 마운트 시 원격(D1)에서 한 번 하이드레이트 — 단, 그 전에 사용자가 손대지 않았을 때만
+  const initialRef = useRef(state);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const saveTimer = useRef(null);
+
   useEffect(() => {
-    saveState(state);
+    let alive = true;
+    loadRemote().then((remote) => {
+      if (!alive || !remote || typeof remote !== "object") return;
+      if (stateRef.current === initialRef.current) {
+        setState({ ...DEFAULT_STATE, ...remote });
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // 로컬은 즉시, 원격 저장은 디바운스(700ms)
+  useEffect(() => {
+    if (state === initialRef.current) return; // 초기값은 저장 안 함
+    saveState(state, { remote: false });
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => saveState(state), 700);
+    return () => saveTimer.current && clearTimeout(saveTimer.current);
   }, [state]);
 
   const ruleSet = useMemo(() => getRuleSet(state.ruleSetVersion), [state.ruleSetVersion]);

@@ -1,9 +1,18 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "get-jip",
+  "main": "worker/index.js",
   "compatibility_date": "2025-06-01",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "get-jip",
+      "database_id": "REPLACE_WITH_ID_FROM_wrangler_d1_create"
+    }
+  ]
 }
