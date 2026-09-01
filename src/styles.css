@@ -458,8 +458,7 @@ input, select, textarea {
 }
 .step-chip.active {
   color: var(--text);
-  border-color: var(--glow);
-  background: rgba(26,157,115, 0.1);
+  background: color-mix(in srgb, var(--c) 12%, transparent);
 }
 .step-chip .step-dot {
   width: 20px;
@@ -469,12 +468,11 @@ input, select, textarea {
   place-items: center;
   font-size: 11px;
   font-weight: 800;
-  background: var(--panel-soft);
+  border: 2px solid var(--locked);
+  background: transparent;
   color: var(--dim);
   flex-shrink: 0;
 }
-.step-chip.step-ready .step-dot { background: rgba(201,121,31, 0.2); color: var(--accent); }
-.step-chip.step-done .step-dot { background: var(--glow); color: #fff; }
 .step-chip .step-name { font-weight: 600; }
 .step-chip .step-frac { font-size: 10.5px; color: var(--dim); font-weight: 700; }
 

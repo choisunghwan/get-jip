@@ -32,6 +32,7 @@ export const JOURNEY = [
       "목표 집값 대략 정하기 — 호가 말고 실거래가 기준",
     ],
     housePart: "foundation",
+    area: "seed",
   },
   {
     id: "step2",
@@ -44,6 +45,7 @@ export const JOURNEY = [
       "청약통장 개설 — 없다면 오늘",
     ],
     housePart: "walls",
+    area: "seed",
   },
   {
     id: "step3",
@@ -58,6 +60,7 @@ export const JOURNEY = [
       "(전세) 전세가율 80% 넘는지 확인",
     ],
     housePart: "roof",
+    area: "listing",
   },
   {
     id: "step4",
@@ -71,6 +74,7 @@ export const JOURNEY = [
       "특별공급 유형·소득기준 확인",
     ],
     housePart: "windows",
+    area: "apply",
   },
   {
     id: "step5",
@@ -84,6 +88,7 @@ export const JOURNEY = [
       "은행 대출 사전심사(가심사) 받기 — 최종 한도는 여기서만 확정",
     ],
     housePart: "door",
+    area: "loan",
   },
   {
     id: "step6",
@@ -97,6 +102,7 @@ export const JOURNEY = [
       "취득세·부대비용 현금 잔금 준비 (대출로 안 나옴)",
     ],
     housePart: "fence",
+    area: "deal",
   },
   {
     id: "step7",
@@ -110,6 +116,7 @@ export const JOURNEY = [
       "전입신고 + (전세라면) 확정일자 즉시",
     ],
     housePart: "keys",
+    area: "deal",
   },
 ];
 
