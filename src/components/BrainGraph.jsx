@@ -228,8 +228,15 @@ export default function BrainGraph({
             const a = positions[e.from];
             const b = positions[e.to];
             if (!a || !b) return null;
-            const both = focusSet && focusSet.has(e.from) && focusSet.has(e.to);
-            const dim = focusSet && !both;
+            const focusBoth = focusSet && focusSet.has(e.from) && focusSet.has(e.to);
+            const dim = focusSet && !focusBoth;
+
+            // 활성화 = 양쪽 노드가 다 최소 '배움' 이상(미학습 아님). 점선/실선(같은 영역·다른 영역)과는 별개 채널
+            const activated = statuses[e.from] !== "unlearned" && statuses[e.to] !== "unlearned";
+            const sameArea = NODE_BY_ID[e.from].area === NODE_BY_ID[e.to].area;
+            const litColor = sameArea ? AREAS[NODE_BY_ID[e.from].area].color : "var(--glow)";
+            const stroke = activated ? litColor : e.cross ? "#bfae92" : "#d7ccb8";
+
             return (
               <line
                 key={i}
@@ -237,10 +244,10 @@ export default function BrainGraph({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke={e.cross ? "#bfae92" : "#d7ccb8"}
-                strokeWidth={both ? 2.4 : e.cross ? 1.4 : 1.1}
+                stroke={stroke}
+                strokeWidth={focusBoth ? 2.8 : activated ? (e.cross ? 2 : 2.2) : e.cross ? 1.2 : 1}
                 strokeDasharray={e.cross ? "5 4" : undefined}
-                opacity={dim ? 0.14 : e.cross ? 0.8 : 0.7}
+                opacity={dim ? 0.12 : activated ? (e.cross ? 0.85 : 0.9) : e.cross ? 0.5 : 0.4}
               />
             );
           })}
@@ -351,6 +358,7 @@ export default function BrainGraph({
         <div className="row"><span className="dot" style={{ background: "var(--glow)" }} /> 내값있음</div>
         <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2px solid #d7ccb8" }} /> 같은 영역끼리</div>
         <div className="row"><span style={{ width: 18, borderTop: "1.6px dashed #bfae92" }} /> 다른 영역과 연결</div>
+        <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2.4px solid #1a9d73" }} /> 굵고 진하면 활성화</div>
       </div>
 
       <div className="graph-toolbar">
