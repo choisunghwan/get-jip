@@ -11,7 +11,7 @@ export default function StepRail({ current, stepProgress, onSelect }) {
         const p = stepProgress[s.id] || {};
         const active = s.id === current;
         const state = p.done ? "done" : p.inputsReady && p.factTotal > 0 ? "ready" : "todo";
-        const c = AREAS[s.area]?.color || "var(--glow)";
+        const c = s.color || AREAS[s.area]?.color || "var(--glow)";
         return (
           <button
             key={s.id}

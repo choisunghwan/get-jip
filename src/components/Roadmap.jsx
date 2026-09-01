@@ -32,10 +32,13 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
             <div
               key={s.id}
               className={`road-step${done ? " done" : ""}${current ? " current" : ""}${!done && !current ? " upcoming" : ""}`}
+              style={{ "--c": s.color }}
             >
               <div className="rs-rail">
-                <div className="rs-dot">{done ? <Icon name="check" size={15} strokeWidth={3} /> : s.num}</div>
-                {i < JOURNEY.length - 1 && <div className="rs-line" />}
+                <div className="rs-dot" style={done || current ? { background: done ? s.color : "transparent", borderColor: s.color, color: done ? "#fff" : s.color } : undefined}>
+                  {done ? <Icon name="check" size={15} strokeWidth={3} /> : s.num}
+                </div>
+                {i < JOURNEY.length - 1 && <div className="rs-line" style={done ? { background: s.color } : undefined} />}
               </div>
               <button className="rs-body" onClick={() => onOpenStep(s.id, { toReport: done })}>
                 <div className="rs-head">

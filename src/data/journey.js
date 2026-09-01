@@ -33,6 +33,7 @@ export const JOURNEY = [
     ],
     housePart: "foundation",
     area: "seed",
+    color: "#0d9488",
   },
   {
     id: "step2",
@@ -46,6 +47,7 @@ export const JOURNEY = [
     ],
     housePart: "walls",
     area: "seed",
+    color: "#16a34a",
   },
   {
     id: "step3",
@@ -61,6 +63,7 @@ export const JOURNEY = [
     ],
     housePart: "roof",
     area: "listing",
+    color: "#9333ea",
   },
   {
     id: "step4",
@@ -75,6 +78,7 @@ export const JOURNEY = [
     ],
     housePart: "windows",
     area: "apply",
+    color: "#2563eb",
   },
   {
     id: "step5",
@@ -89,6 +93,7 @@ export const JOURNEY = [
     ],
     housePart: "door",
     area: "loan",
+    color: "#d97706",
   },
   {
     id: "step6",
@@ -103,6 +108,7 @@ export const JOURNEY = [
     ],
     housePart: "fence",
     area: "deal",
+    color: "#dc2626",
   },
   {
     id: "step7",
@@ -117,6 +123,7 @@ export const JOURNEY = [
     ],
     housePart: "keys",
     area: "deal",
+    color: "#854d0e",
   },
 ];
 
