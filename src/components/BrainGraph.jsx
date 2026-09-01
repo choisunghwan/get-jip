@@ -26,6 +26,7 @@ export default function BrainGraph({
   const wrapRef = useRef(null);
   const [size, setSize] = useState({ w: 800, h: 600 });
   const [view, setView] = useState({ tx: 0, ty: 0, k: 1 });
+  const [legendOpen, setLegendOpen] = useState(true);
 
   useLayoutEffect(() => {
     const el = wrapRef.current;
@@ -352,13 +353,20 @@ export default function BrainGraph({
         </g>
       </svg>
 
-      <div className="graph-legend">
-        <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #c2b6a0" }} /> 미학습 (아직 안 배움)</div>
-        <div className="row"><span className="dot" style={{ background: hexA("#1a9d73", 0.22), border: "2px solid var(--glow)" }} /> 배움 (개념만)</div>
-        <div className="row"><span className="dot" style={{ background: "var(--glow)" }} /> 내값있음</div>
-        <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2px solid #d7ccb8" }} /> 같은 영역끼리</div>
-        <div className="row"><span style={{ width: 18, borderTop: "1.6px dashed #bfae92" }} /> 다른 영역과 연결</div>
-        <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2.4px solid #1a9d73" }} /> 굵고 진하면 활성화</div>
+      <div className={`graph-legend${legendOpen ? "" : " collapsed"}`}>
+        <button className="legend-head" onClick={() => setLegendOpen((v) => !v)}>
+          범례 <span className="legend-caret">{legendOpen ? "▾" : "▸"}</span>
+        </button>
+        {legendOpen && (
+          <div className="legend-body">
+            <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #c2b6a0" }} /> 미학습 (아직 안 배움)</div>
+            <div className="row"><span className="dot" style={{ background: hexA("#1a9d73", 0.22), border: "2px solid var(--glow)" }} /> 배움 (개념만)</div>
+            <div className="row"><span className="dot" style={{ background: "var(--glow)" }} /> 내값있음</div>
+            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2px solid #d7ccb8" }} /> 같은 영역끼리</div>
+            <div className="row"><span style={{ width: 18, borderTop: "1.6px dashed #bfae92" }} /> 다른 영역과 연결</div>
+            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2.4px solid #1a9d73" }} /> 굵고 진하면 활성화</div>
+          </div>
+        )}
       </div>
 
       <div className="graph-toolbar">
