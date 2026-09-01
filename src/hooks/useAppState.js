@@ -132,7 +132,7 @@ export function useAppState() {
   }, []);
 
   const finishOnboarding = useCallback(() => {
-    setState((s) => ({ ...s, onboarded: true, userName: s.userName || "나" }));
+    setState((s) => ({ ...s, onboarded: true, userName: s.userName || "사용자" }));
   }, []);
 
   const markLearned = useCallback((nodeId) => {
