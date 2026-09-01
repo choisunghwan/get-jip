@@ -6,6 +6,7 @@ import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
 import QuickStart from "./components/QuickStart.jsx";
+import GuideMode from "./components/GuideMode.jsx";
 import StepRail from "./components/StepRail.jsx";
 import StepPanel from "./components/StepPanel.jsx";
 import HouseProgress from "./components/HouseProgress.jsx";
@@ -19,6 +20,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
   const [focusAll, setFocusAll] = useState(false);
+  const [view, setView] = useState("guide"); // 'guide' | 'map'
 
   const highlightIds = useMemo(() => {
     if (focusAll) return null;
@@ -28,6 +30,30 @@ export default function App() {
 
   if (!state.onboarded) {
     return <QuickStart state={state} actions={actions} />;
+  }
+
+  if (view === "guide") {
+    return (
+      <>
+        <GuideMode
+          state={state}
+          pipeline={pipeline}
+          statuses={statuses}
+          stepProgress={stepProgress}
+          actions={actions}
+          onOpenMap={() => setView("map")}
+          onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
+        />
+        {modal?.type === "practice" && (
+          <WritingPractice
+            practiceId={modal.practiceId}
+            state={state}
+            actions={actions}
+            onClose={() => setModal(null)}
+          />
+        )}
+      </>
+    );
   }
 
   const openCardForNode = (nodeId) => {
@@ -43,12 +69,15 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div>
-          <h1>{state.userName}이 집 구하기</h1>
-          <p className="sub">실제 집 구하는 순서대로 · 아는 것만 답하면 계산돼요</p>
+          <h1>{state.userName}이 집 구하기 · 전체 지도</h1>
+          <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
-        <button className="chip" onClick={() => setFocusAll((v) => !v)}>
-          {focusAll ? "🧠 전체 보기" : "🎯 이 단계만"}
-        </button>
+        <div style={{ display: "flex", gap: 6 }}>
+          <button className="chip" onClick={() => setFocusAll((v) => !v)}>
+            {focusAll ? "🧠 전체" : "🎯 이 단계만"}
+          </button>
+          <button className="chip" onClick={() => setView("guide")}>← 가이드로</button>
+        </div>
       </header>
 
       <StepRail current={state.currentStep} stepProgress={stepProgress} onSelect={gotoStep} />

@@ -17,6 +17,19 @@ export function percent(r) {
   return r == null ? "—" : `${Math.round(r * 1000) / 10}%`;
 }
 
+/** 짧은 금액 표기: 3.5억 / 5,000만 / 0 */
+export function eok(n) {
+  if (n == null || Number.isNaN(n)) return "—";
+  const sign = n < 0 ? "-" : "";
+  const abs = Math.abs(Math.round(n));
+  if (abs >= 1e8) {
+    const v = abs / 1e8;
+    return `${sign}${abs % 1e8 ? v.toFixed(1) : v.toFixed(0)}억`;
+  }
+  if (abs >= 1e4) return `${sign}${Math.round(abs / 1e4).toLocaleString()}만`;
+  return `${sign}${abs}`;
+}
+
 export function months(m) {
   if (m == null) return "—";
   if (m === 0) return "지금 가능";

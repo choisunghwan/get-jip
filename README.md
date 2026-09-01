@@ -66,13 +66,20 @@ MVP는 `localStorage` ([src/lib/storage.js](src/lib/storage.js)). `loadState()` 
 
 `reference/homebuying-brain-pipeline.jsx` — 재계산 엔진 원형 (데모 #4). 최종 엔진은 이걸 5영역 그래프로 일반화한 것.
 
+## 두 가지 보기
+
+- **가이드 모드 (기본)** — [src/components/GuideMode.jsx](src/components/GuideMode.jsx). 초보자용. 한 번에 개념 하나씩:
+  쉬운 설명 → (필요하면) 입력 → "당신은 지금 X예요" 결과 문장. STEP 끝마다 [narration.js](src/data/narration.js)가
+  숫자를 문장·표로 엮어주는 정리 화면 + 집 부위 조립.
+- **전체 지도 (심화)** — 뇌 그래프. "개념이 어떻게 얽혀 있는지" 보고 싶을 때. 가이드에서 "🗺️ 전체 지도로 보기"로 전환.
+
 ## STEP (실제 집 구하는 순서)
 
 1. 얼마짜리 집이 가능한가 (자금 파악) → 2. 종잣돈 계획 → 3. 어디서 살까 (지역·매물) →
 4. 청약 노려보기 → 5. 대출 확정 준비 → 6. 계약 → 7. 잔금·등기·입주
 
-각 STEP은 그래프의 한 묶음 노드를 밝히고, 옆 패널에 그 단계의 입력칸 + 배울 개념 + 앱 밖 할 일 체크리스트를 보여준다.
-"이 단계 완료"를 누르면 [HouseProgress](src/components/HouseProgress.jsx)의 집 부위가 조립된다(기초→벽→지붕→창문→문→울타리→열쇠).
+"이 단계 완료"(또는 가이드에서 STEP 정리 후 '다음')를 누르면 [HouseProgress](src/components/HouseProgress.jsx)의
+집 부위가 조립된다(기초→벽→지붕→창문→문→울타리→열쇠).
 
 ## 스택
 
