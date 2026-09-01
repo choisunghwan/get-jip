@@ -6,12 +6,12 @@ import SessionFile from "./SessionFile.jsx";
 import Icon from "./Icon.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
-export default function Roadmap({ name, state, actions, pipeline, stepProgress, level, onOpenStep, onOpenMap, onOpenList }) {
+export default function Roadmap({ name, state, actions, pipeline, stepProgress, level, onOpenStep }) {
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
   const allDone = currentIdx === -1;
 
   return (
-    <div className="road">
+    <div className="road has-tabbar">
       <div className="road-hero">
         <HouseProgress stepProgress={stepProgress} size={128} />
         <h1 className="road-title">
@@ -74,11 +74,6 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
         <p className="muted" style={{ fontSize: 11, margin: "6px 0 0", lineHeight: 1.6 }}>
           입력값은 로그인 없이 익명으로만 쓰여요. 개인정보 수집·공유 없음.
         </p>
-      </div>
-
-      <div className="guide-view-links">
-        <button onClick={onOpenList}><Icon name="list" size={13} /> 전체 항목 목록</button>
-        <button onClick={onOpenMap}><Icon name="map" size={13} /> 전체 지도</button>
       </div>
     </div>
   );

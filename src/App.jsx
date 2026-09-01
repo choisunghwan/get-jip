@@ -3,6 +3,7 @@ import { useAppState } from "./hooks/useAppState.js";
 import { JOURNEY_BY_ID } from "./data/journey.js";
 import LevelUpBanner from "./components/LevelUpBanner.jsx";
 import Icon from "./components/Icon.jsx";
+import TabBar from "./components/TabBar.jsx";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
@@ -21,6 +22,7 @@ export default function App() {
   const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
   const [focusAll, setFocusAll] = useState(false);
   const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map'
+  const [homeSignal, setHomeSignal] = useState(0); // 바뀔 때마다 GuideMode가 여정 화면으로 리셋
 
   useEffect(() => {
     document.title = state.userName ? `${state.userName}의 집짓기` : "집짓기 — 내 집 마련 가이드";
@@ -37,6 +39,20 @@ export default function App() {
   if (!state.onboarded) {
     return <QuickStart state={state} actions={actions} />;
   }
+
+  const goHome = () => {
+    setSelectedId(null);
+    setView("guide");
+    setHomeSignal((s) => s + 1);
+  };
+  const goList = () => {
+    setSelectedId(null);
+    setView("list");
+  };
+  const goMap = () => {
+    setSelectedId(null);
+    setView("map");
+  };
 
   const practiceModal =
     modal?.type === "practice" ? (
@@ -66,6 +82,8 @@ export default function App() {
     </div>
   ) : null;
 
+  const tabBar = <TabBar active={view === "guide" ? "home" : view} onHome={goHome} onList={goList} onMap={goMap} />;
+
   if (view === "guide") {
     return (
       <>
@@ -77,10 +95,10 @@ export default function App() {
           stepProgress={stepProgress}
           level={level}
           actions={actions}
-          onOpenMap={() => setView("map")}
-          onOpenList={() => setView("list")}
+          homeSignal={homeSignal}
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
         />
+        {tabBar}
         {practiceModal}
       </>
     );
@@ -90,20 +108,13 @@ export default function App() {
     return (
       <>
         {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
-        <ListView
-          state={state}
-          pipeline={pipeline}
-          statuses={statuses}
-          onSelect={setSelectedId}
-          onBack={() => setView("guide")}
-          onOpenMap={() => setView("map")}
-        />
+        <ListView state={state} pipeline={pipeline} statuses={statuses} onSelect={setSelectedId} />
+        {tabBar}
         {nodeSheet}
         {practiceModal}
       </>
     );
   }
-
 
   const gotoStep = (id) => {
     setSelectedId(null);
@@ -111,22 +122,16 @@ export default function App() {
   };
 
   return (
-    <div className="app">
+    <div className="app has-tabbar">
       {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
       <header className="app-header">
         <div>
           <h1>{state.userName}의 집짓기 · 전체 지도</h1>
           <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          <button className="chip chip-ico" onClick={() => setFocusAll((v) => !v)}>
-            <Icon name={focusAll ? "brain" : "target"} size={13} /> {focusAll ? "전체" : "이 단계만"}
-          </button>
-          <button className="chip chip-ico" onClick={() => setView("list")}>
-            <Icon name="list" size={13} /> 목록
-          </button>
-          <button className="chip" onClick={() => setView("guide")}>← 가이드</button>
-        </div>
+        <button className="chip chip-ico" onClick={() => setFocusAll((v) => !v)}>
+          <Icon name={focusAll ? "brain" : "target"} size={13} /> {focusAll ? "전체" : "이 단계만"}
+        </button>
       </header>
 
       <StepRail current={state.currentStep} stepProgress={stepProgress} onSelect={gotoStep} />
@@ -171,6 +176,8 @@ export default function App() {
         대출 승인·계약서 검토·시세는 은행 사전심사·공인중개사·법무사와 반드시 확인하세요.
         입력값은 로그인·개인정보 수집 없이 익명으로만 쓰이며, 진행 파일로 내려받아 직접 보관할 수 있습니다.
       </div>
+
+      {tabBar}
 
       {modal?.type === "card" && (
         <CardFlow

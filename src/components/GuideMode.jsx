@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { JOURNEY, JOURNEY_BY_ID } from "../data/journey.js";
 import { NODE_BY_ID } from "../data/nodes.js";
@@ -14,8 +14,15 @@ import Icon from "./Icon.jsx";
 import { downloadSessionHtml } from "../lib/sessionFile.js";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
-export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenList, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, level, actions, homeSignal, onOpenPractice }) {
   const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
+
+  // 하단 탭바 '홈'을 누르면(같은 뷰 안에 있어도) 여정 화면으로
+  useEffect(() => {
+    setMode("roadmap");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeSignal]);
+
   const stepId = state.currentStep;
   const step = JOURNEY_BY_ID[stepId];
   const stepIdx = JOURNEY.findIndex((s) => s.id === stepId);
@@ -72,8 +79,6 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         stepProgress={stepProgress}
         level={level}
         onOpenStep={openStep}
-        onOpenMap={onOpenMap}
-        onOpenList={onOpenList}
       />
     );
   }
@@ -83,7 +88,7 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
   const onSummary = screen === "summary";
 
   return (
-    <div className="guide">
+    <div className="guide has-tabbar">
       {/* 슬림 헤더 */}
       <div className="guide-head">
         <button className="gh-back" onClick={backToRoadmap} aria-label="여정으로">←</button>
@@ -164,11 +169,6 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         <button className="btn primary gn-next" onClick={goNext}>
           {onSummary ? (JOURNEY[stepIdx + 1] ? "다음 단계 →" : "완성!") : "다음 →"}
         </button>
-      </div>
-
-      <div className="guide-view-links">
-        <button onClick={onOpenList}><Icon name="list" size={13} /> 전체 항목 목록</button>
-        <button onClick={onOpenMap}><Icon name="map" size={13} /> 전체 지도</button>
       </div>
     </div>
   );
