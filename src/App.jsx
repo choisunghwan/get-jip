@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppState } from "./hooks/useAppState.js";
-import { DECK_INDEX_BY_NODE } from "./data/cardDeck.js";
 import { JOURNEY_BY_ID } from "./data/journey.js";
 import LevelUpBanner from "./components/LevelUpBanner.jsx";
 import BrainGraph from "./components/BrainGraph.jsx";
@@ -65,9 +64,6 @@ export default function App() {
     );
   }
 
-  const openCardForNode = (nodeId) => {
-    setModal({ type: "card", startIndex: DECK_INDEX_BY_NODE[nodeId] ?? 0 });
-  };
 
   const gotoStep = (id) => {
     setSelectedId(null);
@@ -142,7 +138,6 @@ export default function App() {
               onSelect={setSelectedId}
               onLearn={(id) => actions.markLearned(id)}
               onSetFact={(key, v) => actions.setFact(key, v)}
-              onOpenCard={openCardForNode}
               onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
               onClose={() => setSelectedId(null)}
             />

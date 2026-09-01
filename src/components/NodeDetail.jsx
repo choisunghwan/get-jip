@@ -5,6 +5,26 @@ import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 
+// 이 노드를 채우거나 바꾸는 데 필요한 입력(fact) 노드들 — 최대 2홉.
+function relatedFactIds(nodeId) {
+  const seen = new Set([nodeId]);
+  const out = [];
+  let frontier = [nodeId];
+  for (let hop = 0; hop < 2 && out.length < 6; hop++) {
+    const next = [];
+    for (const id of frontier) {
+      for (const nb of EDGES_BY_NODE[id] || []) {
+        if (seen.has(nb)) continue;
+        seen.add(nb);
+        if (FIELD_BY_NODE[nb]) out.push(nb);
+        next.push(nb);
+      }
+    }
+    frontier = next;
+  }
+  return out;
+}
+
 export default function NodeDetail({
   nodeId,
   state,
@@ -13,21 +33,30 @@ export default function NodeDetail({
   onSelect,
   onLearn,
   onSetFact,
-  onOpenCard,
   onOpenPractice,
   onClose,
 }) {
   const node = NODE_BY_ID[nodeId];
-  const field = FIELD_BY_NODE[nodeId];
-  const saved = field ? state.facts[field.key] : undefined;
-
   if (!node) return null;
+
+  const field = FIELD_BY_NODE[nodeId];
   const area = AREAS[node.area];
   const status = statuses[nodeId];
   const rawVal = resolveNodeValue(node, state.facts, pipeline);
   const hasVal = status === "hasValue" && node.value;
-  const neighbors = [...new Set(EDGES_BY_NODE[nodeId] || [])];
-  const cardIndex = DECK_INDEX_BY_NODE[nodeId];
+
+  // 이 노드에 딸린 입력들: fact면 자기 자신, pipeline이면 계산에 쓰이는 fact들
+  const inputIds = field
+    ? [nodeId]
+    : relatedFactIds(nodeId).sort((a, b) => {
+        const fa = statuses[a] === "hasValue" ? 1 : 0;
+        const fb = statuses[b] === "hasValue" ? 1 : 0;
+        return fa - fb; // 안 채운 것 먼저
+      });
+
+  const otherNeighbors = [...new Set(EDGES_BY_NODE[nodeId] || [])].filter(
+    (id) => !inputIds.includes(id)
+  );
 
   return (
     <div className="panel-box">
@@ -42,16 +71,6 @@ export default function NodeDetail({
       <p className="muted" style={{ fontSize: 13, color: "var(--text)" }}>{node.desc}</p>
       <div className="tip">💡 <b>꿀팁</b> — {node.tip}</div>
 
-      {/* fact 노드: 그 자리에서 입력 */}
-      {field && (
-        <div style={{ marginTop: 14 }}>
-          <p className="panel-title" style={{ margin: "0 0 2px" }}>
-            내 값 {saved != null && <span style={{ color: area.color }}>· 저장됨</span>}
-          </p>
-          <InlineFactField field={field} value={saved} onCommit={(v) => onSetFact(field.key, v)} />
-        </div>
-      )}
-
       {/* pipeline 노드: 계산 결과 */}
       {!field && hasVal && (
         <div className="kv" style={{ marginTop: 14, borderBottom: "none" }}>
@@ -61,17 +80,47 @@ export default function NodeDetail({
           </span>
         </div>
       )}
-      {!field && !hasVal && node.value && (
+
+      {/* 채울 수 있는 입력들 (자기 자신 또는 계산에 쓰이는 값들) */}
+      {inputIds.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          <p className="panel-title" style={{ margin: "0 0 4px" }}>
+            {field ? "내 값" : "이 값을 바꾸려면 여기를 채워요"}
+          </p>
+          {inputIds.map((id) => {
+            const inode = NODE_BY_ID[id];
+            const ifield = FIELD_BY_NODE[id];
+            const filled = statuses[id] === "hasValue";
+            return (
+              <div key={id} style={{ marginTop: field ? 0 : 12 }}>
+                {!field && (
+                  <label style={{ fontSize: 13, fontWeight: 700, display: "flex", justifyContent: "space-between" }}>
+                    <span>{inode.label}</span>
+                    {filled && <span style={{ color: AREAS[inode.area].color }}>✓</span>}
+                  </label>
+                )}
+                <InlineFactField
+                  field={ifield}
+                  value={state.facts[ifield.key]}
+                  onCommit={(v) => onSetFact(ifield.key, v)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!field && inputIds.length === 0 && !hasVal && (
         <p className="muted" style={{ marginTop: 12 }}>
-          선행 정보가 더 필요해요. 아래 얽힌 개념 중 회색 노드를 채우면 자동 계산됩니다.
+          이건 개념이에요. 아래 얽힌 개념을 눌러 살펴보세요.
         </p>
       )}
 
-      {neighbors.length > 0 && (
+      {otherNeighbors.length > 0 && (
         <>
           <p className="panel-title" style={{ margin: "16px 0 6px" }}>얽힌 개념</p>
           <div className="chip-row">
-            {neighbors.map((id) => {
+            {otherNeighbors.map((id) => {
               const nb = NODE_BY_ID[id];
               const nbArea = AREAS[nb.area];
               const st = statuses[id];
@@ -93,9 +142,6 @@ export default function NodeDetail({
       <div className="btn-row">
         {status === "unlearned" && !field && (
           <button className="btn primary" onClick={() => onLearn(nodeId)}>이해했어요</button>
-        )}
-        {!field && cardIndex != null && (
-          <button className="btn" onClick={() => onOpenCard(nodeId)}>관련 카드로</button>
         )}
         {node.practice && (
           <button className="btn" onClick={() => onOpenPractice(node.practice)}>연습해보기</button>
