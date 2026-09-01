@@ -8,9 +8,11 @@ import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue, eok } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
+import Roadmap from "./Roadmap.jsx";
 
-// 초보자 기본 화면. 한 번에 하나씩: 쉬운 설명 → (있으면) 입력 → 결과 문장.
+// 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
 export default function GuideMode({ state, pipeline, stepProgress, actions, onOpenMap, onOpenPractice }) {
+  const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
   const stepId = state.currentStep;
   const step = JOURNEY_BY_ID[stepId];
   const stepIdx = JOURNEY.findIndex((s) => s.id === stepId);
@@ -26,7 +28,13 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
   const [si, setSi] = useState(0);
   const [dir, setDir] = useState(1);
 
-  const doneCount = JOURNEY.filter((s) => stepProgress[s.id]?.done).length;
+  const openStep = (id) => {
+    setDir(1);
+    setSi(0);
+    actions.setCurrentStep(id);
+    setMode("step");
+  };
+  const backToRoadmap = () => setMode("roadmap");
 
   const goNext = () => {
     if (si < screens.length - 1) {
@@ -34,13 +42,11 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
       setSi(si + 1);
       return;
     }
+    // 단계 정리 화면에서 '다음' → 완료 처리 + 여정 화면으로
     if (!stepProgress[stepId]?.done) actions.toggleStepDone(stepId);
     const next = JOURNEY[stepIdx + 1];
-    if (next) {
-      setDir(1);
-      setSi(0);
-      actions.setCurrentStep(next.id);
-    }
+    if (next) actions.setCurrentStep(next.id);
+    setMode("roadmap");
   };
   const goPrev = () => {
     if (si > 0) {
@@ -48,18 +54,21 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
       setSi(si - 1);
       return;
     }
-    const prev = JOURNEY[stepIdx - 1];
-    if (prev) {
-      setDir(-1);
-      setSi(0);
-      actions.setCurrentStep(prev.id);
-    }
+    setMode("roadmap");
   };
-  const jumpStep = (id) => {
-    setDir(1);
-    setSi(0);
-    actions.setCurrentStep(id);
-  };
+
+  if (mode === "roadmap") {
+    return (
+      <Roadmap
+        name={state.userName}
+        state={state}
+        pipeline={pipeline}
+        stepProgress={stepProgress}
+        onOpenStep={openStep}
+        onOpenMap={onOpenMap}
+      />
+    );
+  }
 
   const screen = screens[si];
   const conceptNo = screen.startsWith("c:") ? si : null;
@@ -69,15 +78,14 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
     <div className="guide">
       {/* 슬림 헤더 */}
       <div className="guide-head">
+        <button className="gh-back" onClick={backToRoadmap} aria-label="여정으로">←</button>
         <div className="gh-mid">
-          <div className="gh-step">STEP {step.num} · {step.title}</div>
+          <div className="gh-step">STEP {step.num} / 7 · {step.title}</div>
           <div className="gh-dots">
             {JOURNEY.map((s, i) => (
-              <button
+              <span
                 key={s.id}
                 className={`ghd${i === stepIdx ? " on" : ""}${stepProgress[s.id]?.done ? " done" : ""}`}
-                onClick={() => jumpStep(s.id)}
-                aria-label={`STEP ${s.num}`}
               />
             ))}
           </div>

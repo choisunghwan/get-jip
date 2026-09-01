@@ -56,12 +56,11 @@ export default function BrainGraph({
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
   };
   const onSvgPointerMove = (e) => {
-    if (!panRef.current) return;
-    setView((v) => ({
-      ...v,
-      tx: panRef.current.tx + (e.clientX - panRef.current.x),
-      ty: panRef.current.ty + (e.clientY - panRef.current.y),
-    }));
+    const start = panRef.current;
+    if (!start) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    setView((v) => ({ ...v, tx: start.tx + dx, ty: start.ty + dy }));
   };
   const onSvgPointerUp = (e) => {
     panRef.current = null;
