@@ -10,8 +10,6 @@ import QuickStart from "./components/QuickStart.jsx";
 import GuideMode from "./components/GuideMode.jsx";
 import ListView from "./components/ListView.jsx";
 import StepRail from "./components/StepRail.jsx";
-import StepPanel from "./components/StepPanel.jsx";
-import HouseProgress from "./components/HouseProgress.jsx";
 import RuleSetSwitcher from "./components/RuleSetSwitcher.jsx";
 import ProgressStats from "./components/ProgressStats.jsx";
 import WritingPractice from "./components/WritingPractice.jsx";
@@ -146,15 +144,9 @@ export default function App() {
         />
 
         <aside className="side-pane">
-          <HouseProgress stepProgress={stepProgress} />
-          <StepPanel
-            stepId={state.currentStep}
-            state={state}
-            statuses={statuses}
-            stepProg={stepProgress}
-            actions={actions}
-            onSelectNode={setSelectedId}
-          />
+          <p className="muted" style={{ margin: 0 }}>
+            노드를 눌러 값을 입력하거나 개념을 배우세요. 회색은 아직 안 배운 개념이에요.
+          </p>
           <RuleSetSwitcher
             ruleSets={ruleSets}
             current={state.ruleSetVersion}
