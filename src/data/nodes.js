@@ -200,8 +200,9 @@ export const NODES = [
     id: "deal_type",
     area: "loan",
     label: "거래 유형",
-    desc: "매매냐 전세냐. 어떤 대출을 쓰는지, 어떤 규제를 맞는지가 갈린다.",
-    tip: "이 앱은 매매를 기본으로 계산한다. 전세를 고르면 전세대출 차단 여부를 함께 본다.",
+    desc: "집을 사는 건지(매매), 전세로 들어가는 건지예요. 어떤 대출을 쓰고 어떤 규제를 맞는지가 여기서 갈려요.",
+    tip: "이 앱은 매매를 기본으로 계산해요. 전세를 고르면 전세자금대출이 막혔는지도 함께 봐요.",
+    value: { source: "fact", key: "dealType", kind: "text" },
   },
 
   // ── 매물 ──
@@ -217,8 +218,9 @@ export const NODES = [
     id: "interest_region",
     area: "listing",
     label: "관심 지역",
-    desc: "내가 집을 보고 있는 동네. 규제지역 판정, 시세, 청약 경쟁률의 기준.",
-    tip: "'서울'처럼 넓게 잡아두고 좁혀가라. 규제는 시·구 단위로 지정되는 경우가 많다.",
+    desc: "집을 보고 있는 동네예요. 규제지역인지, 시세가 어떤지, 청약 경쟁이 센지가 다 여기서 갈려요.",
+    tip: "'서울'처럼 넓게 잡아두고 좁혀가세요. 규제는 보통 시·구 단위로 지정돼요.",
+    value: { source: "fact", key: "interestRegion", kind: "text" },
   },
   {
     id: "official_price",
