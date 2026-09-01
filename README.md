@@ -99,4 +99,4 @@ React 18 (Vite) · d3-force · framer-motion · localStorage(→ Supabase) · Ve
 4. Save and Deploy → `get-jip.pages.dev`
 
 이후 `main` push마다 자동 배포, PR마다 프리뷰 URL.
-SPA 폴백은 `public/_redirects`(`/* /index.html 200`)로 처리.
+SPA 폴백은 wrangler.jsonc 의 `not_found_handling: "single-page-application"` 로 처리.
