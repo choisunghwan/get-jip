@@ -3,7 +3,7 @@
 // 각 STEP: intro(왜/뭘) + buildSummary(내 숫자를 문장·표로).
 // buildSummary -> { headline, rows:[{k,v,strong?}], soWhat, note? }
 // ─────────────────────────────────────────────────────────────
-import { eok, percent, months } from "../lib/format.js";
+import { eok, percent, months, hon } from "../lib/format.js";
 
 export const HOUSE_PART_KO = {
   foundation: "기초",
@@ -35,8 +35,8 @@ export const STEP_GUIDE = {
       const canBuy = p.affordablePrice != null;
       return {
         verdict: canBuy
-          ? `지금 ${name}님이 살 수 있는 집은 약 ${eok(p.affordablePrice)}이에요.`
-          : `${name}님이 빌릴 수 있는 돈은 약 ${eok(p.loanLimit)}이에요.`,
+          ? `지금 ${hon(name)} 살 수 있는 집은 약 ${eok(p.affordablePrice)}이에요.`
+          : `${hon(name)} 빌릴 수 있는 돈은 약 ${eok(p.loanLimit)}이에요.`,
         verdictSub: canBuy
           ? `종잣돈 ${eok(f.seedSavings)} + 빌릴 수 있는 돈 ${eok(p.loanLimit)} − 세금·수수료 ${eok(p.incidentalCosts)}`
           : reason,
@@ -141,7 +141,7 @@ export const STEP_GUIDE = {
           ? " 비인기 단지나 특별공급을 노리는 게 현실적이에요."
           : " 일반공급 가점으로는 당첨이 어려워요. 대신 추첨 비중이 큰 '생애최초 특별공급'을 노리세요.";
       return {
-        headline: `${name}님의 예상 청약 가점은 약 ${pts}점이에요 (최대 84점).` + read,
+        headline: `${hon(name)} 예상 청약 가점은 약 ${pts}점이에요 (최대 84점).` + read,
         rows: [
           { k: "무주택 기간", v: f.homelessMonths != null ? months(f.homelessMonths) : "—" },
           { k: "청약통장 기간", v: f.subscriptionMonths != null ? months(f.subscriptionMonths) : "—" },
@@ -206,7 +206,7 @@ export const STEP_GUIDE = {
       "마지막까지 등기부 확인과 전입신고를 놓치지 않습니다.",
     buildSummary(name, f, p) {
       return {
-        headline: `${name}님, 여기까지가 집 구하기의 큰 그림이에요.`,
+        headline: `${hon(name)}, 여기까지가 집 구하기의 큰 그림이에요.`,
         rows: [],
         soWhat:
           "잔금일 아침에 등기부를 마지막으로 다시 떼서 새 근저당이 없는지 확인한 뒤 잔금을 보내세요. " +

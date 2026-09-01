@@ -8,7 +8,7 @@ import { loadLocal, loadRemote, saveState, clearState } from "../lib/storage.js"
 import { deltaLabel } from "../lib/format.js";
 
 const DEFAULT_STATE = {
-  userName: "성환",
+  userName: "",
   onboarded: false,
   facts: {},
   learned: {}, // { [nodeId]: true }
@@ -132,7 +132,7 @@ export function useAppState() {
   }, []);
 
   const finishOnboarding = useCallback(() => {
-    setState((s) => ({ ...s, onboarded: true }));
+    setState((s) => ({ ...s, onboarded: true, userName: s.userName || "나" }));
   }, []);
 
   const markLearned = useCallback((nodeId) => {

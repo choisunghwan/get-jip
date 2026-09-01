@@ -17,6 +17,11 @@ export function percent(r) {
   return r == null ? "—" : `${Math.round(r * 1000) / 10}%`;
 }
 
+/** 이름 존칭. 이름 없거나 기본값이면 "나". */
+export function hon(name) {
+  return name && name !== "나" ? `${name}님` : "나";
+}
+
 /** 짧은 금액 표기: 3.5억 / 5,000만 / 0 */
 export function eok(n) {
   if (n == null || Number.isNaN(n)) return "—";

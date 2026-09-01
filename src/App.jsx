@@ -23,7 +23,7 @@ export default function App() {
   const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map'
 
   useEffect(() => {
-    document.title = `${state.userName}의 집짓기`;
+    document.title = state.userName ? `${state.userName}의 집짓기` : "집짓기 — 내 집 마련 가이드";
   }, [state.userName]);
 
   const showLevelUp = level.lv > state.seenLevel;

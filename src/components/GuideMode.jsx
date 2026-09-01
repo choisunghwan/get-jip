@@ -5,7 +5,7 @@ import { NODE_BY_ID } from "../data/nodes.js";
 import { FIELD_BY_NODE } from "../data/cardDeck.js";
 import { STEP_GUIDE, HOUSE_PART_KO } from "../data/narration.js";
 import { resolveNodeValue } from "../hooks/useAppState.js";
-import { formatValue, eok } from "../lib/format.js";
+import { formatValue, eok, hon } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
 import Roadmap from "./Roadmap.jsx";
@@ -190,7 +190,7 @@ function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOp
 
       {field && (
         <div className="g-ask">
-          <p className="g-ask-label">{name}님은 어때요?</p>
+          <p className="g-ask-label">내 값은?</p>
           <InlineFactField field={field} value={state.facts[field.key]} onCommit={(v) => actions.setFact(field.key, v)} />
         </div>
       )}
@@ -203,8 +203,7 @@ function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOp
             <>
               <Icon name="pin" size={15} className="g-result-icon" />
               <span>
-                {name}님은 지금 <b>{node.value.kind === "won" ? `약 ${eok(val)}` : formatValue(node.value.kind, val)}</b>
-                {node.value.kind === "won" ? "예요." : "예요."}
+                {hon(name)} 지금 <b>{node.value.kind === "won" ? `약 ${eok(val)}` : formatValue(node.value.kind, val)}</b>예요.
               </span>
             </>
           )}
