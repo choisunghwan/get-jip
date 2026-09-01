@@ -12,7 +12,7 @@ import Roadmap from "./Roadmap.jsx";
 import LevelBadge from "./LevelBadge.jsx";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
-export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenList, onOpenPractice }) {
   const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
   const stepId = state.currentStep;
   const step = JOURNEY_BY_ID[stepId];
@@ -70,6 +70,7 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         level={level}
         onOpenStep={openStep}
         onOpenMap={onOpenMap}
+        onOpenList={onOpenList}
       />
     );
   }
@@ -162,9 +163,10 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         </button>
       </div>
 
-      <button className="guide-map-link" onClick={onOpenMap}>
-        🗺️ 전체 지도로 보기
-      </button>
+      <div className="guide-view-links">
+        <button onClick={onOpenList}>📋 전체 항목 목록</button>
+        <button onClick={onOpenMap}>🗺️ 전체 지도</button>
+      </div>
     </div>
   );
 }

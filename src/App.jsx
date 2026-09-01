@@ -7,6 +7,7 @@ import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
 import QuickStart from "./components/QuickStart.jsx";
 import GuideMode from "./components/GuideMode.jsx";
+import ListView from "./components/ListView.jsx";
 import StepRail from "./components/StepRail.jsx";
 import StepPanel from "./components/StepPanel.jsx";
 import HouseProgress from "./components/HouseProgress.jsx";
@@ -20,7 +21,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
   const [focusAll, setFocusAll] = useState(false);
-  const [view, setView] = useState("guide"); // 'guide' | 'map'
+  const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map'
 
   useEffect(() => {
     document.title = `${state.userName}의 집짓기`;
@@ -38,6 +39,34 @@ export default function App() {
     return <QuickStart state={state} actions={actions} />;
   }
 
+  const practiceModal =
+    modal?.type === "practice" ? (
+      <WritingPractice
+        practiceId={modal.practiceId}
+        state={state}
+        actions={actions}
+        onClose={() => setModal(null)}
+      />
+    ) : null;
+
+  const nodeSheet = selectedId ? (
+    <div className="modal-backdrop" onClick={() => setSelectedId(null)}>
+      <div className="node-sheet" onClick={(e) => e.stopPropagation()}>
+        <NodeDetail
+          nodeId={selectedId}
+          state={state}
+          pipeline={pipeline}
+          statuses={statuses}
+          onSelect={setSelectedId}
+          onLearn={(id) => actions.markLearned(id)}
+          onSetFact={(key, v) => actions.setFact(key, v)}
+          onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
+          onClose={() => setSelectedId(null)}
+        />
+      </div>
+    </div>
+  ) : null;
+
   if (view === "guide") {
     return (
       <>
@@ -50,16 +79,28 @@ export default function App() {
           level={level}
           actions={actions}
           onOpenMap={() => setView("map")}
+          onOpenList={() => setView("list")}
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
         />
-        {modal?.type === "practice" && (
-          <WritingPractice
-            practiceId={modal.practiceId}
-            state={state}
-            actions={actions}
-            onClose={() => setModal(null)}
-          />
-        )}
+        {practiceModal}
+      </>
+    );
+  }
+
+  if (view === "list") {
+    return (
+      <>
+        {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
+        <ListView
+          state={state}
+          pipeline={pipeline}
+          statuses={statuses}
+          onSelect={setSelectedId}
+          onBack={() => setView("guide")}
+          onOpenMap={() => setView("map")}
+        />
+        {nodeSheet}
+        {practiceModal}
       </>
     );
   }
@@ -78,11 +119,12 @@ export default function App() {
           <h1>{state.userName}의 집짓기 · 전체 지도</h1>
           <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
-        <div style={{ display: "flex", gap: 6 }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           <button className="chip" onClick={() => setFocusAll((v) => !v)}>
             {focusAll ? "🧠 전체" : "🎯 이 단계만"}
           </button>
-          <button className="chip" onClick={() => setView("guide")}>← 가이드로</button>
+          <button className="chip" onClick={() => setView("list")}>📋 목록</button>
+          <button className="chip" onClick={() => setView("guide")}>← 가이드</button>
         </div>
       </header>
 
@@ -127,23 +169,7 @@ export default function App() {
         </aside>
       </div>
 
-      {selectedId && (
-        <div className="modal-backdrop" onClick={() => setSelectedId(null)}>
-          <div className="node-sheet" onClick={(e) => e.stopPropagation()}>
-            <NodeDetail
-              nodeId={selectedId}
-              state={state}
-              pipeline={pipeline}
-              statuses={statuses}
-              onSelect={setSelectedId}
-              onLearn={(id) => actions.markLearned(id)}
-              onSetFact={(key, v) => actions.setFact(key, v)}
-              onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
-              onClose={() => setSelectedId(null)}
-            />
-          </div>
-        </div>
-      )}
+      {nodeSheet}
 
       <div className="disclaimer">
         이 앱은 계약서 쓰기 전까지 감을 잡고 준비하는 도구입니다. 모든 계산·규칙 수치는 근사치이며,
@@ -158,14 +184,7 @@ export default function App() {
           onClose={() => setModal(null)}
         />
       )}
-      {modal?.type === "practice" && (
-        <WritingPractice
-          practiceId={modal.practiceId}
-          state={state}
-          actions={actions}
-          onClose={() => setModal(null)}
-        />
-      )}
+      {practiceModal}
     </div>
   );
 }

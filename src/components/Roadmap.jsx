@@ -4,7 +4,7 @@ import HouseProgress from "./HouseProgress.jsx";
 import LevelBadge from "./LevelBadge.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
-export default function Roadmap({ name, state, pipeline, stepProgress, level, onOpenStep, onOpenMap }) {
+export default function Roadmap({ name, state, pipeline, stepProgress, level, onOpenStep, onOpenMap, onOpenList }) {
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
   const allDone = currentIdx === -1;
 
@@ -49,9 +49,10 @@ export default function Roadmap({ name, state, pipeline, stepProgress, level, on
         })}
       </div>
 
-      <button className="guide-map-link" onClick={onOpenMap}>
-        🗺️ 전체 지도로 보기 — 개념이 어떻게 얽혀 있는지
-      </button>
+      <div className="guide-view-links">
+        <button onClick={onOpenList}>📋 전체 항목 목록</button>
+        <button onClick={onOpenMap}>🗺️ 전체 지도</button>
+      </div>
     </div>
   );
 }
