@@ -10,9 +10,9 @@ export default function LevelUpBanner({ level, onAck }) {
   return (
     <motion.button
       className="levelup"
-      initial={{ y: -60, opacity: 0 }}
+      initial={{ y: 60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -60, opacity: 0 }}
+      exit={{ y: 60, opacity: 0 }}
       transition={{ type: "spring", stiffness: 260, damping: 20 }}
       onClick={onAck}
     >

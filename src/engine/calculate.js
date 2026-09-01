@@ -155,6 +155,12 @@ export function calculate(facts, ruleSet) {
   let savingGap = null;
   if (requiredCash != null && seedSavings != null) savingGap = requiredCash - seedSavings;
 
+  // 지금 현실적으로 살 수 있는 집값(근사): 종잣돈 + 대출한도 − 부대비용
+  let affordablePrice = null;
+  if (seedSavings != null && loanLimit != null && incidentalCosts != null) {
+    affordablePrice = Math.max(0, seedSavings + loanLimit - incidentalCosts);
+  }
+
   let monthsToClose = null;
   if (savingGap != null && monthlySaving) {
     monthsToClose = savingGap > 0 ? Math.ceil(savingGap / monthlySaving) : 0;
@@ -190,6 +196,7 @@ export function calculate(facts, ruleSet) {
     requiredCash,
     savingGap,
     monthsToClose,
+    affordablePrice,
     // 청약
     subscriptionPoints: points,
     incomeCriteriaPass,

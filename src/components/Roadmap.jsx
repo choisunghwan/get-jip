@@ -35,14 +35,14 @@ export default function Roadmap({ name, state, pipeline, stepProgress, level, on
                 <div className="rs-dot">{done ? "✓" : s.num}</div>
                 {i < JOURNEY.length - 1 && <div className="rs-line" />}
               </div>
-              <button className="rs-body" onClick={() => onOpenStep(s.id)}>
+              <button className="rs-body" onClick={() => onOpenStep(s.id, { toReport: done })}>
                 <div className="rs-head">
                   <span className="rs-title">{s.title}</span>
                   {result && <span className="rs-result">{result}</span>}
                 </div>
                 <p className="rs-blurb">{s.blurb}</p>
                 {current && <span className="rs-cta">시작하기 →</span>}
-                {done && <span className="rs-again">다시 보기</span>}
+                {done && <span className="rs-again">📋 리포트 다시 보기</span>}
               </button>
             </div>
           );

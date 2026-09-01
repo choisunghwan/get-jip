@@ -30,28 +30,36 @@ export const STEP_GUIDE = {
       }
       const reason =
         p.bindingConstraint === "DSR"
-          ? " 규정상으로는 더 빌릴 수 있지만, 소득으로 갚을 수 있는 한도(DSR)가 더 낮아서 그게 실제 한도가 됐어요."
-          : " 소득 한도보다 집값 대비 비율(LTV)이 더 빡빡해서 그게 한도를 정했어요.";
+          ? "규정상으로는 더 빌릴 수 있지만, 소득으로 갚을 수 있는 한도(DSR)가 더 낮아서 그게 실제 한도가 됐어요."
+          : "집값 대비 비율(LTV)이 소득 한도보다 빡빡해서 그게 한도를 정했어요.";
+      const canBuy = p.affordablePrice != null;
       return {
-        headline: `${name}님이 지금 빌릴 수 있는 돈은 약 ${eok(p.loanLimit)}이에요.` + reason,
+        verdict: canBuy
+          ? `지금 ${name}님이 살 수 있는 집은 약 ${eok(p.affordablePrice)}이에요.`
+          : `${name}님이 빌릴 수 있는 돈은 약 ${eok(p.loanLimit)}이에요.`,
+        verdictSub: canBuy
+          ? `종잣돈 ${eok(f.seedSavings)} + 빌릴 수 있는 돈 ${eok(p.loanLimit)} − 세금·수수료 ${eok(p.incidentalCosts)}`
+          : reason,
+        headline: canBuy ? "" : reason,
         rows: [
-          { k: "목표 집값", v: eok(f.targetPrice) },
-          { k: "빌릴 수 있는 돈", v: eok(p.loanLimit) },
-          { k: "내가 내야 할 현금", v: eok(f.targetPrice - p.loanLimit) },
+          { k: `목표한 ${eok(f.targetPrice)} 집을 사려면`, v: "", head: true },
+          { k: "집값", v: eok(f.targetPrice) },
+          { k: "− 빌릴 수 있는 돈", v: eok(p.loanLimit) },
           { k: "＋ 세금·수수료", v: eok(p.incidentalCosts) },
-          { k: "지금 필요한 현금", v: eok(p.requiredCash), strong: true },
+          { k: "지금 있어야 하는 현금", v: eok(p.requiredCash), strong: true },
         ],
-        soWhat:
-          f.seedSavings != null
-            ? `${name}님은 ${eok(f.seedSavings)}이 있으니 약 ${eok(p.savingGap)}이 더 필요해요. 다음 단계에서 계획을 세워요.`
-            : "다음 단계에서 내 종잣돈을 넣으면 얼마가 부족한지 나와요.",
+        soWhat: canBuy
+          ? p.affordablePrice + 1e6 >= f.targetPrice
+            ? `목표한 ${eok(f.targetPrice)} 집, 지금 조건으로 살 수 있어요! 다음 단계에서 종잣돈·저축 계획을 점검해요.`
+            : `목표(${eok(f.targetPrice)})보다 낮아요. ${eok(p.affordablePrice)}대 매물을 보거나, 종잣돈을 더 모으거나, 소득을 올려 대출 한도를 키워야 해요.`
+          : "다음 단계에서 내 종잣돈을 넣으면 '살 수 있는 집값'이 딱 나와요.",
       };
     },
   },
 
   step2: {
     intro:
-      "필요한 현금에서 내 종잣돈을 빼면 '부족분'이에요. 매달 저축으로 이걸 언제 다 채우는지 계산하고, " +
+      "STEP 1에서 나온 '부족분'을 매달 저축으로 언제 다 채우는지 계산해요. " +
       "청약통장이 없다면 이 단계에서 만듭니다.",
     buildSummary(name, f, p) {
       if (p.savingGap == null) {
@@ -64,14 +72,20 @@ export const STEP_GUIDE = {
       const enough = p.savingGap <= 0;
       const rows = [
         { k: "지금 필요한 현금", v: eok(p.requiredCash) },
-        { k: "내 종잣돈", v: eok(f.seedSavings) },
+        { k: "− 내 종잣돈", v: eok(f.seedSavings) },
         { k: "부족분", v: enough ? "없음" : eok(p.savingGap), strong: true },
       ];
       if (f.monthlySaving) rows.push({ k: "매달 저축", v: eok(f.monthlySaving) });
       return {
-        headline: enough
+        verdict: enough
           ? "필요한 현금이 이미 준비돼 있어요. 바로 집을 알아봐도 돼요."
+          : p.monthsToClose
+          ? `지금 속도로 약 ${months(p.monthsToClose)} 뒤에 살 수 있어요.`
           : `${eok(p.savingGap)}을 더 모아야 해요.`,
+        verdictSub: enough
+          ? `종잣돈 ${eok(f.seedSavings)}이 필요한 현금 ${eok(p.requiredCash)}보다 많아요.`
+          : `부족분 ${eok(p.savingGap)}${f.monthlySaving ? ` ÷ 월 저축 ${eok(f.monthlySaving)}` : ""}`,
+        headline: "",
         rows,
         soWhat: enough
           ? "여유가 있으면 목표 집값을 조금 올려보거나, 더 좋은 위치를 봐도 돼요."

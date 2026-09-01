@@ -29,9 +29,11 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
   const [si, setSi] = useState(0);
   const [dir, setDir] = useState(1);
 
-  const openStep = (id) => {
+  const openStep = (id, opts = {}) => {
     setDir(1);
-    setSi(0);
+    const target = JOURNEY_BY_ID[id];
+    const screenCount = target.nodeIds.length + 2; // intro + concepts + summary
+    setSi(opts.toReport ? screenCount - 1 : 0);
     actions.setCurrentStep(id);
     setMode("step");
   };
@@ -220,17 +222,30 @@ function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgre
 
   return (
     <div className="g-summary">
-      <span className="g-kicker done">STEP {step.num} 정리</span>
-      <p className="g-headline">{s.headline}</p>
+      <span className="g-kicker done">📋 STEP {step.num} 리포트</span>
+
+      {s.verdict && (
+        <div className="g-verdict">
+          <span className="g-verdict-label">결론</span>
+          <p className="g-verdict-main">{s.verdict}</p>
+          {s.verdictSub && <p className="g-verdict-sub">{s.verdictSub}</p>}
+        </div>
+      )}
+
+      {s.headline && <p className="g-headline">{s.headline}</p>}
 
       {s.rows.length > 0 && (
         <div className="g-rows">
-          {s.rows.map((r, i) => (
-            <div key={i} className={`g-row${r.strong ? " strong" : ""}`}>
-              <span>{r.k}</span>
-              <b>{r.v}</b>
-            </div>
-          ))}
+          {s.rows.map((r, i) =>
+            r.head ? (
+              <div key={i} className="g-row-head">{r.k}</div>
+            ) : (
+              <div key={i} className={`g-row${r.strong ? " strong" : ""}`}>
+                <span>{r.k}</span>
+                <b>{r.v}</b>
+              </div>
+            )
+          )}
         </div>
       )}
 
