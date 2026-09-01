@@ -18,7 +18,7 @@ export const CARD_DECK = [
     id: "onboarding",
     type: "name",
     title: "먼저, 이름을 알려주세요",
-    body: "이 앱은 '누군가의 집 구하기'가 아니라 '당신의 집 구하기'예요. 입력한 이름이 앱 곳곳에 들어갑니다.",
+    body: "이 앱은 '누군가의 집짓기'가 아니라 '당신의 집짓기'예요. 입력한 이름이 앱 곳곳에 들어갑니다.",
     tip: "본명이 아니어도 돼요. 나중에 바꿀 수 있어요.",
     field: { key: "userName", input: "text", placeholder: "예: 성환", maxLength: 12 },
   },

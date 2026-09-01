@@ -31,7 +31,7 @@ export default function QuickStart({ state, actions }) {
     <div className="modal-backdrop" style={{ alignItems: "center" }}>
       <div className="modal" style={{ maxWidth: 460 }}>
         <h1 style={{ fontSize: 20, fontWeight: 800, margin: "4px 0 4px" }}>
-          {name.trim() ? `${name.trim()}이 집 구하기` : "집 구하기"}
+          {name.trim() ? `${name.trim()}의 집짓기` : "집짓기"}
         </h1>
         <p className="muted" style={{ marginBottom: 4 }}>
           3개만 답하면 바로 내 대출 한도·필요 현금이 계산돼요. 나머지는 그래프에서 노드를 눌러 채우면 됩니다.

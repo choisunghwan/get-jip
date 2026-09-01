@@ -3,6 +3,7 @@ import { calculate } from "../engine/calculate.js";
 import { RULE_SETS, DEFAULT_RULE_SET_VERSION, getRuleSet } from "../data/ruleSets.js";
 import { NODES, NODE_BY_ID } from "../data/nodes.js";
 import { JOURNEY } from "../data/journey.js";
+import { calcXp, levelFor } from "../data/levels.js";
 import { loadState, saveState, clearState } from "../lib/storage.js";
 import { deltaLabel } from "../lib/format.js";
 
@@ -16,6 +17,7 @@ const DEFAULT_STATE = {
   currentStep: "step1",
   stepsDone: {}, // { [stepId]: true }  사용자가 "이 단계 완료" 누른 것
   stepTodos: {}, // { [stepId]: { [idx]: true } }  할 일 체크
+  seenLevel: 1, // 레벨업 알림을 본 마지막 레벨
 };
 
 const DECAY_MS = 2600; // 재계산 흔들림 지속 시간
@@ -72,6 +74,11 @@ export function useAppState() {
       },
     };
   }, [statuses]);
+
+  const level = useMemo(
+    () => levelFor(calcXp(statuses, state.stepsDone, state.stepTodos)),
+    [statuses, state.stepsDone, state.stepTodos]
+  );
 
   // 단계별 진행: 입력칸(fact 노드) 채움 비율 + 완료 여부
   const stepProgress = useMemo(() => {
@@ -154,6 +161,10 @@ export function useAppState() {
     });
   }, []);
 
+  const ackLevel = useCallback((lv) => {
+    setState((s) => (s.seenLevel >= lv ? s : { ...s, seenLevel: lv }));
+  }, []);
+
   const toggleStepTodo = useCallback((stepId, idx) => {
     setState((s) => {
       const cur = { ...(s.stepTodos[stepId] || {}) };
@@ -179,6 +190,7 @@ export function useAppState() {
     statuses,
     progress,
     stepProgress,
+    level,
     deltas,
     shakeSeq,
     actions: {
@@ -192,6 +204,7 @@ export function useAppState() {
       setCurrentStep,
       toggleStepDone,
       toggleStepTodo,
+      ackLevel,
       reset,
     },
   };

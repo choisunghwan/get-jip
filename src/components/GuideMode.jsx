@@ -9,9 +9,10 @@ import { formatValue, eok } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
 import Roadmap from "./Roadmap.jsx";
+import LevelBadge from "./LevelBadge.jsx";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
-export default function GuideMode({ state, pipeline, stepProgress, actions, onOpenMap, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenPractice }) {
   const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
   const stepId = state.currentStep;
   const step = JOURNEY_BY_ID[stepId];
@@ -64,6 +65,7 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
         state={state}
         pipeline={pipeline}
         stepProgress={stepProgress}
+        level={level}
         onOpenStep={openStep}
         onOpenMap={onOpenMap}
       />
@@ -80,7 +82,10 @@ export default function GuideMode({ state, pipeline, stepProgress, actions, onOp
       <div className="guide-head">
         <button className="gh-back" onClick={backToRoadmap} aria-label="여정으로">←</button>
         <div className="gh-mid">
-          <div className="gh-step">STEP {step.num} / 7 · {step.title}</div>
+          <div className="gh-step">
+            STEP {step.num} / 7 · {step.title}
+            <LevelBadge level={level} compact />
+          </div>
           <div className="gh-dots">
             {JOURNEY.map((s, i) => (
               <span

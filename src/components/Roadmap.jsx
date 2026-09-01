@@ -1,19 +1,21 @@
 import { JOURNEY } from "../data/journey.js";
 import { eok } from "../lib/format.js";
 import HouseProgress from "./HouseProgress.jsx";
+import LevelBadge from "./LevelBadge.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
-export default function Roadmap({ name, state, pipeline, stepProgress, onOpenStep, onOpenMap }) {
+export default function Roadmap({ name, state, pipeline, stepProgress, level, onOpenStep, onOpenMap }) {
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
   const allDone = currentIdx === -1;
 
   return (
     <div className="road">
       <div className="road-hero">
-        <HouseProgress stepProgress={stepProgress} size={132} />
+        <HouseProgress stepProgress={stepProgress} size={128} />
         <h1 className="road-title">
-          {allDone ? `${name}님, 집 완성! 🎉` : `${name}님의 집 구하기`}
+          {allDone ? `${name}님의 집짓기 완성! 🎉` : `${name}님의 집짓기`}
         </h1>
+        <LevelBadge level={level} />
         <p className="road-sub">
           {allDone ? "큰 그림은 다 봤어요. 실제 진행은 전문가와 확인하세요." : "순서대로 하나씩 하면 돼요. 지금 할 일부터 시작하세요."}
         </p>

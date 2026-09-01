@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppState } from "./hooks/useAppState.js";
 import { DECK_INDEX_BY_NODE } from "./data/cardDeck.js";
 import { JOURNEY_BY_ID } from "./data/journey.js";
+import LevelUpBanner from "./components/LevelUpBanner.jsx";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
@@ -15,12 +16,18 @@ import ProgressStats from "./components/ProgressStats.jsx";
 import WritingPractice from "./components/WritingPractice.jsx";
 
 export default function App() {
-  const { state, ruleSets, pipeline, statuses, progress, stepProgress, deltas, shakeSeq, actions } =
+  const { state, ruleSets, pipeline, statuses, progress, stepProgress, level, deltas, shakeSeq, actions } =
     useAppState();
   const [selectedId, setSelectedId] = useState(null);
   const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
   const [focusAll, setFocusAll] = useState(false);
   const [view, setView] = useState("guide"); // 'guide' | 'map'
+
+  useEffect(() => {
+    document.title = `${state.userName}의 집짓기`;
+  }, [state.userName]);
+
+  const showLevelUp = level.lv > state.seenLevel;
 
   const highlightIds = useMemo(() => {
     if (focusAll) return null;
@@ -35,11 +42,13 @@ export default function App() {
   if (view === "guide") {
     return (
       <>
+        {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
         <GuideMode
           state={state}
           pipeline={pipeline}
           statuses={statuses}
           stepProgress={stepProgress}
+          level={level}
           actions={actions}
           onOpenMap={() => setView("map")}
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
@@ -67,9 +76,10 @@ export default function App() {
 
   return (
     <div className="app">
+      {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
       <header className="app-header">
         <div>
-          <h1>{state.userName}이 집 구하기 · 전체 지도</h1>
+          <h1>{state.userName}의 집짓기 · 전체 지도</h1>
           <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
         <div style={{ display: "flex", gap: 6 }}>
@@ -95,7 +105,35 @@ export default function App() {
         />
 
         <aside className="side-pane">
-          {selectedId ? (
+          <HouseProgress stepProgress={stepProgress} />
+          <StepPanel
+            stepId={state.currentStep}
+            state={state}
+            statuses={statuses}
+            stepProg={stepProgress}
+            actions={actions}
+            onSelectNode={setSelectedId}
+          />
+          <RuleSetSwitcher
+            ruleSets={ruleSets}
+            current={state.ruleSetVersion}
+            onSwitch={actions.switchRuleSet}
+            deltas={deltas}
+            onDismiss={actions.dismissDeltas}
+          />
+          <ProgressStats
+            progress={progress}
+            statuses={statuses}
+            pipeline={pipeline}
+            onOpenCard={(startIndex) => setModal({ type: "card", startIndex })}
+            onReset={actions.reset}
+          />
+        </aside>
+      </div>
+
+      {selectedId && (
+        <div className="modal-backdrop" onClick={() => setSelectedId(null)}>
+          <div className="node-sheet" onClick={(e) => e.stopPropagation()}>
             <NodeDetail
               nodeId={selectedId}
               state={state}
@@ -108,35 +146,9 @@ export default function App() {
               onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
               onClose={() => setSelectedId(null)}
             />
-          ) : (
-            <>
-              <HouseProgress stepProgress={stepProgress} />
-              <StepPanel
-                stepId={state.currentStep}
-                state={state}
-                statuses={statuses}
-                stepProg={stepProgress}
-                actions={actions}
-                onSelectNode={setSelectedId}
-              />
-              <RuleSetSwitcher
-                ruleSets={ruleSets}
-                current={state.ruleSetVersion}
-                onSwitch={actions.switchRuleSet}
-                deltas={deltas}
-                onDismiss={actions.dismissDeltas}
-              />
-              <ProgressStats
-                progress={progress}
-                statuses={statuses}
-                pipeline={pipeline}
-                onOpenCard={(startIndex) => setModal({ type: "card", startIndex })}
-                onReset={actions.reset}
-              />
-            </>
-          )}
-        </aside>
-      </div>
+          </div>
+        </div>
+      )}
 
       <div className="disclaimer">
         이 앱은 계약서 쓰기 전까지 감을 잡고 준비하는 도구입니다. 모든 계산·규칙 수치는 근사치이며,
