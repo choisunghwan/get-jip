@@ -2,10 +2,11 @@ import { JOURNEY } from "../data/journey.js";
 import { eok } from "../lib/format.js";
 import HouseProgress from "./HouseProgress.jsx";
 import LevelBadge from "./LevelBadge.jsx";
+import SessionFile from "./SessionFile.jsx";
 import Icon from "./Icon.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
-export default function Roadmap({ name, state, pipeline, stepProgress, level, onOpenStep, onOpenMap, onOpenList }) {
+export default function Roadmap({ name, state, actions, pipeline, stepProgress, level, onOpenStep, onOpenMap, onOpenList }) {
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
   const allDone = currentIdx === -1;
 
@@ -48,6 +49,21 @@ export default function Roadmap({ name, state, pipeline, stepProgress, level, on
             </div>
           );
         })}
+      </div>
+
+      <div className="road-tools">
+        <SessionFile state={state} onLoad={actions.replaceState} mode="both" compact />
+        <label className="road-localonly">
+          <input
+            type="checkbox"
+            checked={!!state.localOnly}
+            onChange={(e) => actions.setLocalOnly(e.target.checked)}
+          />
+          <span>서버에 저장 안 함 (이 브라우저 + 내 파일로만)</span>
+        </label>
+        <p className="muted" style={{ fontSize: 11, margin: "6px 0 0", lineHeight: 1.6 }}>
+          입력값은 로그인 없이 익명으로만 쓰여요. 개인정보 수집·공유 없음.
+        </p>
       </div>
 
       <div className="guide-view-links">

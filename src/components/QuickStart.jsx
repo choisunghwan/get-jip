@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { QUICK_START } from "../data/cardDeck.js";
 import FactField from "./FactField.jsx";
+import SessionFile from "./SessionFile.jsx";
 
 // 첫 화면. 3개만 묻고 바로 그래프로. 나머지는 노드를 눌러 채운다.
 export default function QuickStart({ state, actions }) {
@@ -74,6 +75,16 @@ export default function QuickStart({ state, actions }) {
         >
           그냥 둘러보기
         </button>
+
+        <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--line)" }}>
+          <p className="muted" style={{ margin: "0 0 6px" }}>이미 하던 게 있어요?</p>
+          <SessionFile state={state} onLoad={actions.replaceState} mode="load" compact />
+        </div>
+
+        <p className="muted" style={{ marginTop: 12, fontSize: 11.5, lineHeight: 1.6 }}>
+          입력한 값은 로그인·계정 없이 이 브라우저와 익명 저장소에만 쓰여요. 개인정보 수집·제3자 공유 없음.
+          서버에 아예 안 남기고 싶으면, 진행하다 '진행 파일 저장'으로 내 파일로만 보관하면 됩니다.
+        </p>
       </div>
     </div>
   );

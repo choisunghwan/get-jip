@@ -11,6 +11,7 @@ import HouseProgress from "./HouseProgress.jsx";
 import Roadmap from "./Roadmap.jsx";
 import LevelBadge from "./LevelBadge.jsx";
 import Icon from "./Icon.jsx";
+import { downloadSessionHtml } from "../lib/sessionFile.js";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
 export default function GuideMode({ state, pipeline, stepProgress, level, actions, onOpenMap, onOpenList, onOpenPractice }) {
@@ -66,6 +67,7 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
       <Roadmap
         name={state.userName}
         state={state}
+        actions={actions}
         pipeline={pipeline}
         stepProgress={stepProgress}
         level={level}
@@ -275,6 +277,14 @@ function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgre
             : `'${hasNext ? "다음 단계" : "완성"}'을 누르면 '${partKo}'이(가) 생겨요`}
         </p>
       </div>
+
+      <button
+        className="btn ghost"
+        style={{ width: "100%", marginTop: 14 }}
+        onClick={() => downloadSessionHtml(state)}
+      >
+        <Icon name="scroll" size={13} /> 여기까지 리포트·진행 파일로 저장
+      </button>
     </div>
   );
 }

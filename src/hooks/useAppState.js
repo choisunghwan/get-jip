@@ -18,6 +18,7 @@ const DEFAULT_STATE = {
   stepsDone: {}, // { [stepId]: true }  사용자가 "이 단계 완료" 누른 것
   stepTodos: {}, // { [stepId]: { [idx]: true } }  할 일 체크
   seenLevel: 1, // 레벨업 알림을 본 마지막 레벨
+  localOnly: false, // true면 서버(D1) 저장 안 하고 이 브라우저에만
 };
 
 const DECAY_MS = 2600; // 재계산 흔들림 지속 시간
@@ -54,10 +55,11 @@ export function useAppState() {
   const saveTimer = useRef(null);
 
   useEffect(() => {
+    if (initialRef.current.localOnly) return; // 이 브라우저에만 모드면 원격 안 읽음
     let alive = true;
     loadRemote().then((remote) => {
       if (!alive || !remote || typeof remote !== "object") return;
-      if (stateRef.current === initialRef.current) {
+      if (stateRef.current === initialRef.current && !remote.localOnly) {
         setState({ ...DEFAULT_STATE, ...remote });
       }
     });
@@ -66,12 +68,15 @@ export function useAppState() {
     };
   }, []);
 
-  // 로컬은 즉시, 원격 저장은 디바운스(700ms)
+  // 로컬은 즉시, 원격 저장은 디바운스(700ms) — localOnly면 원격 생략
   useEffect(() => {
     if (state === initialRef.current) return; // 초기값은 저장 안 함
     saveState(state, { remote: false });
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => saveState(state), 700);
+    saveTimer.current = setTimeout(
+      () => saveState(state, { remote: !state.localOnly }),
+      700
+    );
     return () => saveTimer.current && clearTimeout(saveTimer.current);
   }, [state]);
 
@@ -204,6 +209,17 @@ export function useAppState() {
     setDeltas({});
   }, []);
 
+  /** 업로드한 진행 파일로 통째 교체 */
+  const replaceState = useCallback((incoming) => {
+    if (!incoming || typeof incoming !== "object") return;
+    setState({ ...DEFAULT_STATE, ...incoming, onboarded: true });
+    setDeltas({});
+  }, []);
+
+  const setLocalOnly = useCallback((on) => {
+    setState((s) => ({ ...s, localOnly: !!on }));
+  }, []);
+
   useEffect(() => () => decayTimer.current && clearTimeout(decayTimer.current), []);
 
   return {
@@ -229,6 +245,8 @@ export function useAppState() {
       toggleStepDone,
       toggleStepTodo,
       ackLevel,
+      replaceState,
+      setLocalOnly,
       reset,
     },
   };
