@@ -128,9 +128,11 @@ input, select, textarea {
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--text);
-  font-size: 16px;
-  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
+.graph-toolbar button:active { background: var(--panel-soft); }
 
 .graph-legend {
   position: absolute;

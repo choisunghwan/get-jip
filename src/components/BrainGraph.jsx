@@ -37,7 +37,7 @@ export default function BrainGraph({
     return () => ro.disconnect();
   }, []);
 
-  const { positions, dragControls, reheat } = useForceSimulation(NODES, EDGES, size.w, size.h);
+  const { positions, dragControls } = useForceSimulation(NODES, EDGES, size.w, size.h);
 
   // 노드 전체를 감싸는 월드 좌표 박스
   const bounds = useMemo(() => {
@@ -351,9 +351,23 @@ export default function BrainGraph({
       </div>
 
       <div className="graph-toolbar">
-        <button onClick={() => zoomBy(1.2)} aria-label="확대">+</button>
-        <button onClick={() => zoomBy(1 / 1.2)} aria-label="축소">−</button>
-        <button onClick={() => { reheat(); setTimeout(fitView, 400); }} aria-label="정렬">⤢</button>
+        <button onClick={() => zoomBy(1.2)} aria-label="확대">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+        <button onClick={() => zoomBy(1 / 1.2)} aria-label="축소">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+        <button onClick={fitView} aria-label="한눈에 보기" title="한눈에 보기">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="2 4 2 9 7 9" />
+            <path d="M4.2 14a8 8 0 1 0 1.8-8.3L2 9" />
+          </svg>
+        </button>
       </div>
     </div>
   );
