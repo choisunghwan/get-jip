@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { NODES, NODE_BY_ID, AREAS } from "../data/nodes.js";
 import { EDGES, EDGES_BY_NODE } from "../data/edges.js";
 import { useForceSimulation } from "../hooks/useForceSimulation.js";
-import { formatValue } from "../lib/format.js";
+import { formatValue, eok } from "../lib/format.js";
 import { resolveNodeValue } from "../hooks/useAppState.js";
 
 const R = 21;
@@ -199,10 +199,10 @@ export default function BrainGraph({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke={e.cross ? "#63809e" : "#2f4359"}
-                strokeWidth={both ? 2.2 : e.cross ? 1.3 : 1}
+                stroke={e.cross ? "#bfae92" : "#d7ccb8"}
+                strokeWidth={both ? 2.4 : e.cross ? 1.4 : 1.1}
                 strokeDasharray={e.cross ? "5 4" : undefined}
-                opacity={dim ? 0.1 : e.cross ? 0.7 : 0.55}
+                opacity={dim ? 0.14 : e.cross ? 0.8 : 0.7}
               />
             );
           })}
@@ -218,14 +218,18 @@ export default function BrainGraph({
             const shaking = shakeSeq > 0 && deltas[n.id];
             const rawVal = resolveNodeValue(n, state.facts, pipeline);
             const showVal = status === "hasValue" && n.value;
-            const valStr = showVal ? formatValue(n.value.kind, rawVal) : null;
+            const valStr = showVal
+              ? n.value.kind === "won"
+                ? eok(rawVal)
+                : formatValue(n.value.kind, rawVal)
+              : null;
 
             let fill = "none";
-            let stroke = "#4a5f78";
+            let stroke = "#c2b6a0";
             let strokeDash;
             let textFill = "var(--text)";
             if (status === "unlearned") {
-              stroke = "#4a5f78";
+              stroke = "#c2b6a0";
               strokeDash = "3 3";
             } else if (status === "learned") {
               fill = hexA(area.color, 0.18);
@@ -286,7 +290,7 @@ export default function BrainGraph({
                       textAnchor="middle"
                       fill={textFill}
                     >
-                      {valStr.length > 9 ? valStr.replace("원", "") : valStr}
+                      {valStr}
                     </motion.text>
                   )}
                   {shakeSeq > 0 && deltas[n.id] && (
@@ -302,10 +306,10 @@ export default function BrainGraph({
       </svg>
 
       <div className="graph-legend">
-        <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #4a5f78" }} /> 미학습</div>
-        <div className="row"><span className="dot" style={{ background: hexA("#4fd1a5", 0.25), border: "2px solid var(--glow)" }} /> 배움</div>
+        <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #c2b6a0" }} /> 미학습</div>
+        <div className="row"><span className="dot" style={{ background: hexA("#1a9d73", 0.22), border: "2px solid var(--glow)" }} /> 배움</div>
         <div className="row"><span className="dot" style={{ background: "var(--glow)" }} /> 내값있음</div>
-        <div className="row" style={{ marginTop: 4 }}><span style={{ width: 16, borderTop: "1.3px dashed #63809e" }} /> 영역 간 연결</div>
+        <div className="row" style={{ marginTop: 4 }}><span style={{ width: 16, borderTop: "1.3px dashed #bfae92" }} /> 영역 간 연결</div>
       </div>
 
       <div className="graph-toolbar">

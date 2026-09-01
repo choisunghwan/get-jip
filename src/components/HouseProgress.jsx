@@ -1,89 +1,130 @@
 import { motion } from "framer-motion";
 import { JOURNEY } from "../data/journey.js";
 
-// STEP 완료마다 집 부위가 스프링으로 조립된다.
-const spring = { type: "spring", stiffness: 220, damping: 18 };
+// 처음엔 '빈 터 + 설계도(점선)', STEP 완료마다 부위가 색을 입고 채워진다.
+const spring = { type: "spring", stiffness: 200, damping: 18 };
 
-function Part({ show, delay = 0, children }) {
+function Part({ done, delay = 0, ghost, solid }) {
   return (
-    <motion.g
-      initial={false}
-      animate={show ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 14, scale: 0.8 }}
-      transition={{ ...spring, delay: show ? delay : 0 }}
-      style={{ transformOrigin: "center bottom" }}
-    >
-      {children}
-    </motion.g>
+    <g>
+      {/* 설계도(항상 보임) */}
+      <g opacity={done ? 0 : 0.5} style={{ transition: "opacity .3s" }}>{ghost}</g>
+      {/* 완성된 부위 */}
+      <motion.g
+        initial={false}
+        animate={done ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.9 }}
+        transition={{ ...spring, delay: done ? delay : 0 }}
+        style={{ transformOrigin: "center bottom" }}
+      >
+        {solid}
+      </motion.g>
+    </g>
   );
 }
 
-export default function HouseProgress({ stepProgress }) {
+export default function HouseProgress({ stepProgress, size = 150 }) {
   const done = Object.fromEntries(JOURNEY.map((s) => [s.housePart, !!stepProgress[s.id]?.done]));
-  const allDone = JOURNEY.every((s) => stepProgress[s.id]?.done);
   const doneCount = JOURNEY.filter((s) => stepProgress[s.id]?.done).length;
+  const allDone = doneCount === JOURNEY.length;
+
+  const dash = { fill: "none", stroke: "#c2b6a0", strokeWidth: 2, strokeDasharray: "4 4", strokeLinejoin: "round" };
 
   return (
-    <div className="panel-box" style={{ textAlign: "center" }}>
-      <p className="panel-title" style={{ margin: 0 }}>내 집 짓기 {doneCount}/7</p>
+    <div style={{ textAlign: "center" }}>
       <motion.svg
-        viewBox="0 0 200 176"
+        viewBox="0 0 240 176"
         width="100%"
-        height="150"
-        style={{ marginTop: 6, maxWidth: 260 }}
-        animate={allDone ? { scale: [1, 1.04, 1] } : { scale: 1 }}
-        transition={allDone ? { duration: 0.6 } : {}}
+        height={size}
+        style={{ maxWidth: 300, display: "block", margin: "0 auto" }}
+        animate={allDone ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+        transition={allDone ? { duration: 0.7 } : {}}
       >
-        {/* 빈 대지(항상) */}
-        <line x1="12" y1="158" x2="188" y2="158" stroke="var(--line)" strokeWidth="2" />
+        {/* 잔디/땅 */}
+        <rect x="0" y="152" width="240" height="24" fill="#e9e0cf" />
+        <line x1="8" y1="152" x2="232" y2="152" stroke="#cdbfa2" strokeWidth="2" />
 
         {/* 1 기초 */}
-        <Part show={done.foundation}>
-          <rect x="42" y="150" width="116" height="10" rx="2" fill="#5b6b7d" />
-        </Part>
-
+        <Part
+          done={done.foundation}
+          ghost={<rect x="56" y="146" width="128" height="10" rx="2" {...dash} />}
+          solid={<rect x="56" y="146" width="128" height="10" rx="2" fill="#a98a63" />}
+        />
         {/* 2 벽 */}
-        <Part show={done.walls} delay={0.04}>
-          <rect x="52" y="86" width="96" height="64" rx="2" fill={allDone ? "#2f6d55" : "#26374a"} stroke="var(--glow)" strokeWidth="2" />
-        </Part>
-
+        <Part
+          done={done.walls}
+          delay={0.03}
+          ghost={<rect x="66" y="82" width="108" height="64" {...dash} />}
+          solid={<rect x="66" y="82" width="108" height="64" rx="2" fill="#f3e7d3" stroke="#b98d5e" strokeWidth="2.5" />}
+        />
         {/* 3 지붕 */}
-        <Part show={done.roof} delay={0.08}>
-          <path d="M44 88 L100 44 L156 88 Z" fill="#3a4d63" stroke="var(--glow)" strokeWidth="2" strokeLinejoin="round" />
-        </Part>
-
+        <Part
+          done={done.roof}
+          delay={0.06}
+          ghost={<path d="M58 84 L120 40 L182 84 Z" {...dash} />}
+          solid={<path d="M58 84 L120 40 L182 84 Z" fill="#cf7a4b" stroke="#a85f38" strokeWidth="2.5" strokeLinejoin="round" />}
+        />
         {/* 4 창문 */}
-        <Part show={done.windows} delay={0.12}>
-          <rect x="62" y="98" width="20" height="20" rx="1.5" fill={allDone ? "#ffd98a" : "#0f1720"} stroke="var(--glow)" strokeWidth="1.6" />
-          <rect x="118" y="98" width="20" height="20" rx="1.5" fill={allDone ? "#ffd98a" : "#0f1720"} stroke="var(--glow)" strokeWidth="1.6" />
-        </Part>
-
+        <Part
+          done={done.windows}
+          delay={0.09}
+          ghost={<g><rect x="78" y="96" width="22" height="22" {...dash} /><rect x="140" y="96" width="22" height="22" {...dash} /></g>}
+          solid={
+            <g>
+              <rect x="78" y="96" width="22" height="22" rx="2" fill={allDone ? "#ffe6a8" : "#bfe0f2"} stroke="#7c8b96" strokeWidth="2" />
+              <rect x="140" y="96" width="22" height="22" rx="2" fill={allDone ? "#ffe6a8" : "#bfe0f2"} stroke="#7c8b96" strokeWidth="2" />
+            </g>
+          }
+        />
         {/* 5 문 */}
-        <Part show={done.door} delay={0.16}>
-          <rect x="90" y="120" width="20" height="30" rx="1.5" fill="#3a4d63" stroke="var(--glow)" strokeWidth="1.6" />
-          <circle cx="105" cy="135" r="1.6" fill="var(--glow)" />
-        </Part>
-
+        <Part
+          done={done.door}
+          delay={0.12}
+          ghost={<rect x="108" y="118" width="24" height="28" {...dash} />}
+          solid={
+            <g>
+              <rect x="108" y="118" width="24" height="28" rx="2" fill="#8a5a3c" stroke="#6e4630" strokeWidth="2" />
+              <circle cx="127" cy="133" r="1.8" fill="#f3e7d3" />
+            </g>
+          }
+        />
         {/* 6 울타리 */}
-        <Part show={done.fence} delay={0.2}>
-          {[20, 30, 40, 160, 170, 180].map((x) => (
-            <rect key={x} x={x} y="142" width="4" height="16" rx="1" fill="#5b6b7d" />
-          ))}
-          <line x1="18" y1="147" x2="44" y2="147" stroke="#5b6b7d" strokeWidth="2.5" />
-          <line x1="158" y1="147" x2="184" y2="147" stroke="#5b6b7d" strokeWidth="2.5" />
-        </Part>
-
-        {/* 7 열쇠 / 완성 */}
-        <Part show={done.keys} delay={0.24}>
-          <g transform="translate(150 128)">
-            <circle cx="0" cy="0" r="6" fill="none" stroke="var(--accent)" strokeWidth="2.4" />
-            <line x1="4" y1="4" x2="14" y2="14" stroke="var(--accent)" strokeWidth="2.4" />
-            <line x1="11" y1="11" x2="14" y2="8" stroke="var(--accent)" strokeWidth="2.4" />
-          </g>
-        </Part>
+        <Part
+          done={done.fence}
+          delay={0.15}
+          ghost={<g>{[24, 36, 48, 192, 204, 216].map((x) => <rect key={x} x={x} y="134" width="5" height="20" {...dash} />)}</g>}
+          solid={
+            <g>
+              {[24, 36, 48, 192, 204, 216].map((x) => (
+                <rect key={x} x={x} y="134" width="5" height="20" rx="1.5" fill="#c79a68" />
+              ))}
+              <line x1="22" y1="140" x2="55" y2="140" stroke="#c79a68" strokeWidth="3" />
+              <line x1="190" y1="140" x2="223" y2="140" stroke="#c79a68" strokeWidth="3" />
+            </g>
+          }
+        />
+        {/* 7 굴뚝 + 연기(완성) */}
+        <Part
+          done={done.keys}
+          delay={0.18}
+          ghost={<rect x="150" y="52" width="14" height="22" {...dash} />}
+          solid={
+            <g>
+              <rect x="150" y="52" width="14" height="24" rx="1.5" fill="#b06a45" stroke="#8a4f30" strokeWidth="1.6" />
+              {allDone && (
+                <motion.g
+                  animate={{ y: [0, -6, 0], opacity: [0.6, 0.2, 0.6] }}
+                  transition={{ duration: 2.4, repeat: Infinity }}
+                >
+                  <circle cx="157" cy="46" r="5" fill="#d8d2c6" />
+                  <circle cx="162" cy="38" r="4" fill="#d8d2c6" />
+                </motion.g>
+              )}
+            </g>
+          }
+        />
       </motion.svg>
-
-      <p className="muted" style={{ margin: "2px 0 0" }}>
-        {allDone ? "🎉 내 집 완성 — 실제 계약은 전문가와 확인하세요" : "단계를 완료하면 집이 지어져요"}
+      <p className="muted" style={{ margin: "4px 0 0" }}>
+        {allDone ? "🎉 내 집 완성!" : `집 짓기 ${doneCount} / 7`}
       </p>
     </div>
   );

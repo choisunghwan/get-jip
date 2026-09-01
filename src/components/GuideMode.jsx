@@ -8,10 +8,9 @@ import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue, eok } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
-import StepRail from "./StepRail.jsx";
 
 // 초보자 기본 화면. 한 번에 하나씩: 쉬운 설명 → (있으면) 입력 → 결과 문장.
-export default function GuideMode({ state, pipeline, statuses, stepProgress, actions, onOpenMap, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, actions, onOpenMap, onOpenPractice }) {
   const stepId = state.currentStep;
   const step = JOURNEY_BY_ID[stepId];
   const stepIdx = JOURNEY.findIndex((s) => s.id === stepId);
@@ -23,16 +22,10 @@ export default function GuideMode({ state, pipeline, statuses, stepProgress, act
     return [...facts, ...rest];
   }, [step]);
 
-  const screens = useMemo(
-    () => ["intro", ...conceptIds.map((id) => `c:${id}`), "summary"],
-    [conceptIds]
-  );
-
+  const screens = useMemo(() => ["intro", ...conceptIds.map((id) => `c:${id}`), "summary"], [conceptIds]);
   const [si, setSi] = useState(0);
   const [dir, setDir] = useState(1);
-  const clamp = (i) => Math.max(0, Math.min(screens.length - 1, i));
 
-  const f = state.facts;
   const doneCount = JOURNEY.filter((s) => stepProgress[s.id]?.done).length;
 
   const goNext = () => {
@@ -41,7 +34,6 @@ export default function GuideMode({ state, pipeline, statuses, stepProgress, act
       setSi(si + 1);
       return;
     }
-    // summary 에서 다음 → 이 단계 완료 + 다음 단계로
     if (!stepProgress[stepId]?.done) actions.toggleStepDone(stepId);
     const next = JOURNEY[stepIdx + 1];
     if (next) {
@@ -71,144 +63,157 @@ export default function GuideMode({ state, pipeline, statuses, stepProgress, act
 
   const screen = screens[si];
   const conceptNo = screen.startsWith("c:") ? si : null;
+  const onSummary = screen === "summary";
 
   return (
     <div className="guide">
-      {/* 요약 바 */}
-      <div className="guide-summary">
-        <div className="gs-item"><span>목표</span><b>{f.targetPrice != null ? eok(f.targetPrice) : "?"}</b></div>
-        <div className="gs-item"><span>내 돈</span><b>{f.seedSavings != null ? eok(f.seedSavings) : "?"}</b></div>
-        <div className="gs-item"><span>빌릴 수 있음</span><b>{pipeline.loanLimit != null ? eok(pipeline.loanLimit) : "계산 전"}</b></div>
-        <div className="gs-item">
-          <span>더 필요</span>
-          <b>{pipeline.savingGap == null ? "?" : pipeline.savingGap > 0 ? eok(pipeline.savingGap) : "충분"}</b>
+      {/* 슬림 헤더 */}
+      <div className="guide-head">
+        <div className="gh-mid">
+          <div className="gh-step">STEP {step.num} · {step.title}</div>
+          <div className="gh-dots">
+            {JOURNEY.map((s, i) => (
+              <button
+                key={s.id}
+                className={`ghd${i === stepIdx ? " on" : ""}${stepProgress[s.id]?.done ? " done" : ""}`}
+                onClick={() => jumpStep(s.id)}
+                aria-label={`STEP ${s.num}`}
+              />
+            ))}
+          </div>
         </div>
-        <div className="gs-item gs-house"><span>집</span><b>{doneCount}/7</b></div>
+        {pipeline.requiredCash != null && (
+          <div className="gh-cash">
+            <span>필요한 돈</span>
+            <b>{eok(pipeline.requiredCash)}</b>
+          </div>
+        )}
       </div>
 
-      <StepRail current={stepId} stepProgress={stepProgress} onSelect={jumpStep} />
-
       <div className="guide-body">
-          <motion.div
-            key={`${stepId}:${si}`}
-            initial={{ opacity: 0, x: dir * 36 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.22 }}
-            className="guide-card"
-          >
-            {screen === "intro" && (
-              <>
-                <span className="pill">STEP {step.num} / 7</span>
-                <h1 className="guide-h1">{step.title}</h1>
-                <p className="guide-lead">{guide.intro}</p>
-              </>
-            )}
+        <motion.div
+          key={`${stepId}:${si}`}
+          initial={{ opacity: 0, x: dir * 32 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.22 }}
+          className="guide-card"
+        >
+          {screen === "intro" && (
+            <div className="g-intro">
+              <div className="g-intro-art">
+                <HouseProgress stepProgress={stepProgress} size={132} />
+              </div>
+              <span className="g-kicker">STEP {step.num} / 7</span>
+              <h1 className="g-title">{step.title}</h1>
+              <p className="g-lead">{guide.intro}</p>
+            </div>
+          )}
 
-            {conceptNo != null && (
-              <ConceptScreen
-                nodeId={screen.slice(2)}
-                idxLabel={`개념 ${conceptNo}/${conceptIds.length}`}
-                name={state.userName}
-                state={state}
-                pipeline={pipeline}
-                actions={actions}
-                onOpenPractice={onOpenPractice}
-              />
-            )}
+          {conceptNo != null && (
+            <ConceptScreen
+              nodeId={screen.slice(2)}
+              no={conceptNo}
+              total={conceptIds.length}
+              name={state.userName}
+              state={state}
+              pipeline={pipeline}
+              actions={actions}
+              onOpenPractice={onOpenPractice}
+            />
+          )}
 
-            {screen === "summary" && (
-              <SummaryScreen
-                step={step}
-                stepIdx={stepIdx}
-                guide={guide}
-                name={state.userName}
-                state={state}
-                pipeline={pipeline}
-                stepProgress={stepProgress}
-                actions={actions}
-              />
-            )}
-          </motion.div>
+          {onSummary && (
+            <SummaryScreen
+              step={step}
+              hasNext={!!JOURNEY[stepIdx + 1]}
+              guide={guide}
+              name={state.userName}
+              state={state}
+              pipeline={pipeline}
+              stepProgress={stepProgress}
+              actions={actions}
+            />
+          )}
+        </motion.div>
       </div>
 
       <div className="guide-nav">
-        <button className="btn ghost" onClick={goPrev} disabled={si === 0 && stepIdx === 0}>
-          ← 이전
+        <button className="btn ghost gn-prev" onClick={goPrev} disabled={si === 0 && stepIdx === 0}>
+          ←
         </button>
-        <div className="guide-dots">
-          {screens.map((s, i) => (
-            <span key={i} className={`gdot${i === si ? " on" : ""}`} />
-          ))}
-        </div>
-        <button className="btn primary" onClick={goNext}>
-          {screen === "summary"
-            ? JOURNEY[stepIdx + 1]
-              ? `STEP ${step.num + 1} →`
-              : "완성 🎉"
-            : "다음 →"}
+        <span className="gn-count">{si + 1} / {screens.length}</span>
+        <button className="btn primary gn-next" onClick={goNext}>
+          {onSummary ? (JOURNEY[stepIdx + 1] ? "다음 단계 →" : "완성 🎉") : "다음 →"}
         </button>
       </div>
 
       <button className="guide-map-link" onClick={onOpenMap}>
-        🗺️ 전체 지도로 보기 — 개념이 어떻게 얽혀 있는지
+        🗺️ 전체 지도로 보기
       </button>
     </div>
   );
 }
 
-function ConceptScreen({ nodeId, idxLabel, name, state, pipeline, actions, onOpenPractice }) {
+function ConceptScreen({ nodeId, no, total, name, state, pipeline, actions, onOpenPractice }) {
   const node = NODE_BY_ID[nodeId];
   const field = FIELD_BY_NODE[nodeId];
   const val = node.value ? resolveNodeValue(node, state.facts, pipeline) : undefined;
   const isPipeline = node.value?.source === "pipeline";
+  const ord = ["첫", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"][no - 1] || `${no}`;
 
   return (
-    <>
-      <span className="muted" style={{ fontSize: 12 }}>{idxLabel}</span>
-      <h1 className="guide-h1" style={{ fontSize: 22 }}>{node.label}</h1>
-      <p className="guide-body-text">{node.desc}</p>
-      <div className="tip">💡 <b>꿀팁</b> — {node.tip}</div>
+    <div className="g-concept">
+      <span className="g-kicker">{ord}번째 · 개념 {no}/{total}</span>
+      <h1 className="g-title">{node.label}</h1>
+      <p className="g-body">{node.desc}</p>
+      <div className="g-tip"><span>💡</span><p>{node.tip}</p></div>
 
       {field && (
-        <div style={{ marginTop: 16 }}>
-          <p className="panel-title" style={{ margin: "0 0 4px" }}>당신은?</p>
+        <div className="g-ask">
+          <p className="g-ask-label">{name}님은 어때요?</p>
           <InlineFactField field={field} value={state.facts[field.key]} onCommit={(v) => actions.setFact(field.key, v)} />
         </div>
       )}
 
       {isPipeline && (
-        <div className={`guide-result${val == null ? " muted-box" : ""}`}>
-          {val == null
-            ? "아직 계산 전이에요. 앞 단계의 입력값을 채우면 여기에 내 값이 나와요."
-            : `${name}님은 지금 ${node.value.kind === "won" ? `약 ${eok(val)}` : formatValue(node.value.kind, val)}예요.`}
+        <div className={`g-result${val == null ? " pending" : ""}`}>
+          {val == null ? (
+            "앞의 값을 채우면 여기에 내 숫자가 나와요."
+          ) : (
+            <>
+              <span className="g-result-icon">📌</span>
+              <span>
+                {name}님은 지금 <b>{node.value.kind === "won" ? `약 ${eok(val)}` : formatValue(node.value.kind, val)}</b>
+                {node.value.kind === "won" ? "예요." : "예요."}
+              </span>
+            </>
+          )}
         </div>
       )}
 
       {node.practice && (
-        <button className="btn" style={{ width: "100%", marginTop: 12 }} onClick={() => onOpenPractice(node.practice)}>
-          ✍️ 연습해보기
+        <button className="btn" style={{ width: "100%", marginTop: 14 }} onClick={() => onOpenPractice(node.practice)}>
+          ✍️ 직접 연습해보기
         </button>
       )}
-    </>
+    </div>
   );
 }
 
-function SummaryScreen({ step, stepIdx, guide, name, state, pipeline, stepProgress, actions }) {
+function SummaryScreen({ step, hasNext, guide, name, state, pipeline, stepProgress, actions }) {
   const s = guide.buildSummary(name, state.facts, pipeline);
   const todos = state.stepTodos[step.id] || {};
   const partKo = HOUSE_PART_KO[step.housePart];
 
   return (
-    <>
-      <span className="pill" style={{ background: "rgba(79,209,165,0.12)", borderColor: "var(--glow)", color: "var(--glow)" }}>
-        STEP {step.num} 정리
-      </span>
-      <p className="guide-headline">{s.headline}</p>
+    <div className="g-summary">
+      <span className="g-kicker done">STEP {step.num} 정리</span>
+      <p className="g-headline">{s.headline}</p>
 
       {s.rows.length > 0 && (
-        <div className="guide-rows">
+        <div className="g-rows">
           {s.rows.map((r, i) => (
-            <div key={i} className={`grow${r.strong ? " strong" : ""}`}>
+            <div key={i} className={`g-row${r.strong ? " strong" : ""}`}>
               <span>{r.k}</span>
               <b>{r.v}</b>
             </div>
@@ -216,27 +221,29 @@ function SummaryScreen({ step, stepIdx, guide, name, state, pipeline, stepProgre
         </div>
       )}
 
-      {s.soWhat && <div className="tip" style={{ marginTop: 14 }}>{s.soWhat}</div>}
+      {s.soWhat && <div className="g-sowhat">{s.soWhat}</div>}
       {s.note && <div className="warn-box" style={{ marginTop: 10 }}>{s.note}</div>}
 
       {step.todo.length > 0 && (
-        <>
-          <p className="panel-title" style={{ margin: "18px 0 4px" }}>이 단계에서 실제로 할 일</p>
+        <div className="g-todos">
+          <p className="g-todos-title">이 단계에서 실제로 할 일</p>
           {step.todo.map((t, i) => (
             <button key={i} className="todo-row" onClick={() => actions.toggleStepTodo(step.id, i)}>
               <span className={`todo-box${todos[i] ? " on" : ""}`}>{todos[i] ? "✓" : ""}</span>
-              <span style={{ textDecoration: todos[i] ? "line-through" : "none", opacity: todos[i] ? 0.6 : 1 }}>{t}</span>
+              <span style={{ textDecoration: todos[i] ? "line-through" : "none", opacity: todos[i] ? 0.55 : 1 }}>{t}</span>
             </button>
           ))}
-        </>
+        </div>
       )}
 
-      <div style={{ marginTop: 16 }}>
-        <HouseProgress stepProgress={stepProgress} />
-        <p className="muted" style={{ textAlign: "center", marginTop: 4 }}>
-          {stepProgress[step.id]?.done ? `🏠 집에 '${partKo}'이(가) 놓였어요` : `'다음'을 누르면 집에 '${partKo}'이(가) 놓여요`}
+      <div className="g-house-reward">
+        <HouseProgress stepProgress={stepProgress} size={150} />
+        <p className="muted" style={{ marginTop: 2 }}>
+          {stepProgress[step.id]?.done
+            ? `🏠 집에 '${partKo}'이(가) 생겼어요`
+            : `'${hasNext ? "다음 단계" : "완성"}'을 누르면 '${partKo}'이(가) 생겨요`}
         </p>
       </div>
-    </>
+    </div>
   );
 }
