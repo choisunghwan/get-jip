@@ -1,6 +1,6 @@
 import { NODES, AREAS } from "../data/nodes.js";
 
-export default function ProgressStats({ progress, statuses, pipeline, onOpenCard, onReset }) {
+export default function ProgressStats({ progress, statuses, pipeline, onOpenCard }) {
   const byArea = Object.values(AREAS).map((a) => {
     const ns = NODES.filter((n) => n.area === a.key);
     const done = ns.filter((n) => statuses[n.id] === "hasValue").length;
@@ -44,7 +44,6 @@ export default function ProgressStats({ progress, statuses, pipeline, onOpenCard
 
       <div className="btn-row">
         <button className="btn" onClick={() => onOpenCard(0)}>차근차근 배우며 채우기</button>
-        <button className="btn ghost" style={{ flex: "0 0 auto" }} onClick={onReset}>초기화</button>
       </div>
     </div>
   );

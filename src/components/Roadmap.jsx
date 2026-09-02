@@ -81,6 +81,14 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
         <p className="muted" style={{ fontSize: 11, margin: "6px 0 0", lineHeight: 1.6 }}>
           입력값은 로그인 없이 익명으로만 쓰여요. 개인정보 수집·공유 없음.
         </p>
+        <button
+          className="btn ghost road-reset"
+          onClick={() => {
+            if (window.confirm("입력한 값과 진행 상황을 모두 지우고 처음부터 시작할까요?")) actions.reset();
+          }}
+        >
+          처음부터 다시 시작 (초기화)
+        </button>
       </div>
     </div>
   );

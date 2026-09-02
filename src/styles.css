@@ -1013,6 +1013,12 @@ input, select, textarea {
   border-top: 1px solid var(--line);
   background: var(--panel);
 }
+.road-reset {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--dim);
+}
 .road-localonly {
   display: flex;
   align-items: flex-start;

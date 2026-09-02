@@ -170,7 +170,6 @@ export default function App() {
             statuses={statuses}
             pipeline={pipeline}
             onOpenCard={(startIndex) => setModal({ type: "card", startIndex })}
-            onReset={actions.reset}
           />
         </aside>
       </div>
