@@ -3,7 +3,6 @@ import { useAppState } from "./hooks/useAppState.js";
 import { JOURNEY_BY_ID } from "./data/journey.js";
 import LevelUpBanner from "./components/LevelUpBanner.jsx";
 import Icon from "./components/Icon.jsx";
-import TabBar from "./components/TabBar.jsx";
 import BrainGraph from "./components/BrainGraph.jsx";
 import NodeDetail from "./components/NodeDetail.jsx";
 import CardFlow from "./components/CardFlow.jsx";
@@ -84,7 +83,6 @@ export default function App() {
     </div>
   ) : null;
 
-  const tabBar = <TabBar active={view === "guide" ? "home" : view} onHome={goHome} onList={goList} onMap={goMap} />;
   const reportOverlay = showReport ? <ReportView state={state} onClose={() => setShowReport(false)} /> : null;
 
   if (view === "guide") {
@@ -101,8 +99,9 @@ export default function App() {
           homeSignal={homeSignal}
           onOpenReport={() => setShowReport(true)}
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
+          onOpenList={goList}
+          onOpenMap={goMap}
         />
-        {tabBar}
         {reportOverlay}
         {practiceModal}
       </>
@@ -113,8 +112,7 @@ export default function App() {
     return (
       <>
         {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
-        <ListView state={state} pipeline={pipeline} statuses={statuses} onSelect={setSelectedId} />
-        {tabBar}
+        <ListView state={state} pipeline={pipeline} statuses={statuses} onSelect={setSelectedId} onBack={goHome} />
         {reportOverlay}
         {nodeSheet}
         {practiceModal}
@@ -128,11 +126,14 @@ export default function App() {
   };
 
   return (
-    <div className="app has-tabbar">
+    <div className="app">
       {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
       <header className="app-header">
+        <button className="gh-back" onClick={goHome} aria-label="여정으로">
+          <Icon name="back" size={18} />
+        </button>
         <div>
-          <h1>{state.userName}의 집짓기 · 전체 지도</h1>
+          <h1>개념 지도 · 심화</h1>
           <p className="sub">개념이 어떻게 얽혀 있는지 한눈에 · 노드를 눌러 값 입력</p>
         </div>
         <button className="chip chip-ico" onClick={() => setFocusAll((v) => !v)}>
@@ -182,7 +183,6 @@ export default function App() {
         입력값은 로그인·개인정보 수집 없이 익명으로만 쓰이며, 진행 파일로 내려받아 직접 보관할 수 있습니다.
       </div>
 
-      {tabBar}
       {reportOverlay}
 
       {modal?.type === "card" && (

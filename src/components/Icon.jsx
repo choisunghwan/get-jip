@@ -122,6 +122,14 @@ const PATHS = {
       <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
     </>
   ),
+  dots: (
+    <>
+      <circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  back: <polyline points="15 18 9 12 15 6" />,
 };
 
 export default function Icon({ name, size = 16, style, className, strokeWidth = 2 }) {

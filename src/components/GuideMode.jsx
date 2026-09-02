@@ -9,12 +9,11 @@ import { formatValue, eok, hon } from "../lib/format.js";
 import { InlineFactField } from "./FactField.jsx";
 import HouseProgress from "./HouseProgress.jsx";
 import Roadmap from "./Roadmap.jsx";
-import LevelBadge from "./LevelBadge.jsx";
 import Icon from "./Icon.jsx";
 import { downloadSessionHtml } from "../lib/sessionFile.js";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
-export default function GuideMode({ state, pipeline, stepProgress, level, actions, homeSignal, onOpenReport, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, level, actions, homeSignal, onOpenReport, onOpenPractice, onOpenList, onOpenMap }) {
   const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
 
   // 하단 탭바 '홈'을 누르면(같은 뷰 안에 있어도) 여정 화면으로
@@ -75,11 +74,12 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         name={state.userName}
         state={state}
         actions={actions}
-        pipeline={pipeline}
         stepProgress={stepProgress}
         level={level}
         onOpenStep={openStep}
         onOpenReport={onOpenReport}
+        onOpenList={onOpenList}
+        onOpenMap={onOpenMap}
       />
     );
   }
@@ -89,15 +89,14 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
   const onSummary = screen === "summary";
 
   return (
-    <div className="guide has-tabbar">
+    <div className="guide">
       {/* 슬림 헤더 */}
       <div className="guide-head">
-        <button className="gh-back" onClick={backToRoadmap} aria-label="여정으로">←</button>
+        <button className="gh-back" onClick={backToRoadmap} aria-label="여정으로">
+          <Icon name="back" size={18} />
+        </button>
         <div className="gh-mid">
-          <div className="gh-step">
-            STEP {step.num} / 7 · {step.title}
-            <LevelBadge level={level} compact />
-          </div>
+          <div className="gh-step">STEP {step.num} / 7 · {step.title}</div>
           <div className="gh-dots">
             {JOURNEY.map((s, i) => (
               <span
@@ -107,12 +106,6 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
             ))}
           </div>
         </div>
-        {pipeline.requiredCash != null && (
-          <div className="gh-cash">
-            <span>필요한 돈</span>
-            <b>{eok(pipeline.requiredCash)}</b>
-          </div>
-        )}
       </div>
 
       <div className="guide-body">

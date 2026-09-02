@@ -2,9 +2,10 @@ import { useState } from "react";
 import { NODES, AREAS } from "../data/nodes.js";
 import { resolveNodeValue } from "../hooks/useAppState.js";
 import { formatValue, eok } from "../lib/format.js";
+import Icon from "./Icon.jsx";
 
 // 그래프 대신 쓰는 차분한 목록 뷰. 상단 요약 + 영역별 접이식 리스트.
-export default function ListView({ state, pipeline, statuses, onSelect }) {
+export default function ListView({ state, pipeline, statuses, onSelect, onBack }) {
   const areaKeys = Object.keys(AREAS);
   const [open, setOpen] = useState(() => new Set(areaKeys));
   const toggle = (k) =>
@@ -27,9 +28,12 @@ export default function ListView({ state, pipeline, statuses, onSelect }) {
   ];
 
   return (
-    <div className="lst has-tabbar">
+    <div className="lst">
       <div className="lst-head">
-        <span className="lst-head-title">전체 항목</span>
+        <button className="gh-back" onClick={onBack} aria-label="여정으로">
+          <Icon name="back" size={18} />
+        </button>
+        <span className="lst-head-title">개념 전체 목록 · 심화</span>
       </div>
 
       <div className="lst-body">
