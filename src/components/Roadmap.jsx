@@ -47,7 +47,7 @@ export default function Roadmap({
             </button>
           </div>
         ) : (
-          <div className="road-cta" style={{ "--c": current.color }}>
+          <div className="road-cta">
             <span className="road-cta-kick">지금 할 일 · STEP {current.num} / 7</span>
             <h2 className="road-cta-title">{current.title}</h2>
             <p className="road-cta-blurb">{current.blurb}</p>
@@ -67,7 +67,6 @@ export default function Roadmap({
               <li key={s.id}>
                 <button
                   className={`rstep${done ? " done" : ""}${isCurrent ? " current" : ""}`}
-                  style={{ "--c": s.color }}
                   onClick={() => onOpenStep(s.id, { toReport: done })}
                 >
                   <span className="rstep-dot">

@@ -1,21 +1,22 @@
 :root {
-  --bg: #f7f3ec;
+  --bg: #f4f5f7;
   --panel: #ffffff;
-  --panel-soft: #f1ebe0;
-  --line: #e7ddcd;
-  --text: #2c2824;
-  --dim: #8c8478;
-  --locked: #ddd3c2;
-  --glow: #1a9d73;
-  --glow-soft: #e2f3ec;
-  --accent: #c9791f;
-  --warn: #cf5b48;
+  --panel-soft: #eef0f3;
+  --line: #e3e6ea;
+  --text: #1f2430;
+  --dim: #7b8494;
+  --locked: #d6dae0;
+  --glow: #12805f;
+  --glow-soft: #e3f1ec;
+  --accent: #2563eb;
+  --accent-soft: #e9effc;
+  --warn: #dc2626;
 
-  --seed: #16a34a;
-  --apply: #2563eb;
-  --loan: #c9791f;
-  --listing: #8b3fd4;
-  --deal: #d63a3a;
+  --seed: #15803d;
+  --apply: #0891b2;
+  --loan: #1d4ed8;
+  --listing: #7c3aed;
+  --deal: #dc2626;
 }
 
 * { box-sizing: border-box; }
@@ -116,7 +117,7 @@ input, select, textarea {
   display: block;
   touch-action: none;
   background:
-    radial-gradient(1000px 560px at 32% 18%, #fffdf9 0%, var(--bg) 70%);
+    radial-gradient(1000px 560px at 32% 18%, #fbfcfe 0%, var(--bg) 70%);
 }
 
 .graph-toolbar {
@@ -264,7 +265,7 @@ input, select, textarea {
   font-weight: 700;
 }
 .btn.primary {
-  background: rgba(26,157,115, 0.14);
+  background: rgba(18,128,95, 0.13);
   border-color: var(--glow);
   color: var(--glow);
 }
@@ -277,7 +278,7 @@ input, select, textarea {
 .bool-row { display: flex; gap: 8px; margin-top: 12px; }
 .bool-row .btn { flex: 1; }
 .bool-row .btn.on {
-  background: rgba(26,157,115, 0.14);
+  background: rgba(18,128,95, 0.13);
   border-color: var(--glow);
   color: var(--glow);
 }
@@ -355,7 +356,7 @@ input, select, textarea {
 .chip.selected {
   border-color: var(--glow);
   color: var(--glow);
-  background: rgba(26,157,115, 0.12);
+  background: rgba(18,128,95, 0.12);
 }
 
 /* 인라인 아이콘 정렬 */
@@ -430,7 +431,7 @@ input, select, textarea {
 .kv .v { font-weight: 700; }
 
 .practice-note {
-  background: rgba(201,121,31, 0.1);
+  background: rgba(37,99,235, 0.10);
   border: 1px solid var(--accent);
   border-radius: 10px;
   padding: 9px 11px;
@@ -448,7 +449,7 @@ input, select, textarea {
 }
 
 .warn-box {
-  background: rgba(207,91,72, 0.1);
+  background: rgba(220,38,38, 0.09);
   border: 1px solid var(--warn);
   border-radius: 12px;
   padding: 12px 14px;
@@ -527,7 +528,7 @@ input, select, textarea {
   color: var(--glow);
   margin-top: 1px;
 }
-.todo-box.on { border-color: var(--glow); background: rgba(26,157,115, 0.14); }
+.todo-box.on { border-color: var(--glow); background: rgba(18,128,95, 0.13); }
 
 /* ── guide mode (초보자 기본) ── */
 .guide {
@@ -600,11 +601,11 @@ input, select, textarea {
 }
 
 .road-cta {
-  border: 1.5px solid var(--c, var(--accent));
+  border: 1.5px solid var(--accent);
   border-radius: 18px;
   background: var(--panel);
   padding: 18px 18px 20px;
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--c, var(--accent)) 14%, transparent);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 12%, transparent);
   text-align: center;
 }
 .road-cta.done { border-color: var(--glow); box-shadow: none; }
@@ -613,7 +614,7 @@ input, select, textarea {
   font-size: 11.5px;
   font-weight: 800;
   letter-spacing: 0.04em;
-  color: var(--c, var(--accent));
+  color: var(--accent);
 }
 .road-cta.done .road-cta-kick { color: var(--glow); }
 .road-cta-title { font-size: 20px; font-weight: 800; margin: 8px 0 0; line-height: 1.35; }
@@ -630,8 +631,8 @@ input, select, textarea {
   gap: 7px;
 }
 .road-cta:not(.done) .road-cta-go {
-  background: var(--c, var(--accent));
-  border-color: var(--c, var(--accent));
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
 
@@ -668,13 +669,13 @@ input, select, textarea {
   font-weight: 800;
   color: var(--dim);
 }
-.rstep.done .rstep-dot { background: var(--c, var(--glow)); border-color: var(--c, var(--glow)); color: #fff; }
-.rstep.current .rstep-dot { border-color: var(--c, var(--accent)); color: var(--c, var(--accent)); }
+.rstep.done .rstep-dot { background: var(--glow); border-color: var(--glow); color: #fff; }
+.rstep.current .rstep-dot { border-color: var(--accent); color: var(--accent); }
 .rstep-title { flex: 1; font-size: 14.5px; font-weight: 700; }
 .rstep.current .rstep-title { font-weight: 800; }
 .rstep.done .rstep-title { color: var(--dim); font-weight: 600; }
 .rstep-tag { flex-shrink: 0; font-size: 11px; font-weight: 700; color: var(--dim); }
-.rstep-tag.t-now { color: var(--c, var(--accent)); }
+.rstep-tag.t-now { color: var(--accent); }
 .rstep-tag.t-done { color: var(--glow); }
 
 .road-progress-note {
@@ -689,7 +690,7 @@ input, select, textarea {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(20, 16, 12, 0.4);
+  background: rgba(17,20,27, 0.42);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -748,7 +749,7 @@ input, select, textarea {
   font-weight: 800;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(201, 121, 31, 0.14);
+  background: rgba(37,99,235, 0.13);
   color: var(--accent);
   white-space: nowrap;
   margin-left: 8px;
@@ -883,11 +884,11 @@ input, select, textarea {
   margin-top: 16px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: #fbf3e4;
-  border: 1px solid #efdcb8;
+  background: #eef4ff;
+  border: 1px solid #cfe0ff;
 }
 .g-tip span { font-size: 16px; line-height: 1.4; }
-.g-tip p { margin: 0; font-size: 13.5px; line-height: 1.6; color: #7a5a2a; }
+.g-tip p { margin: 0; font-size: 13.5px; line-height: 1.6; color: #1e40af; }
 
 .g-ask { margin-top: 18px; }
 .g-ask-label { font-size: 14px; font-weight: 700; margin: 0 0 4px; }
@@ -986,11 +987,11 @@ input, select, textarea {
   margin-top: 14px;
   padding: 13px 15px;
   border-radius: 12px;
-  background: #fbf3e4;
-  border: 1px solid #efdcb8;
+  background: #eef4ff;
+  border: 1px solid #cfe0ff;
   font-size: 13.5px;
   line-height: 1.7;
-  color: #7a5a2a;
+  color: #1e40af;
 }
 
 .g-todos { margin-top: 18px; }
@@ -1105,7 +1106,7 @@ input, select, textarea {
   height: 11px;
   border-radius: 50%;
   flex-shrink: 0;
-  border: 1.5px solid #c2b6a0;
+  border: 1.5px solid #b6bcc6;
 }
 .lst-dot.lst-unlearned { border-style: dashed; background: transparent; }
 .lst-dot.lst-learned { background: transparent; }

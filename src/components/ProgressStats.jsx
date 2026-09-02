@@ -13,7 +13,7 @@ export default function ProgressStats({ progress, statuses, pipeline, onOpenCard
       <p className="panel-title">완성도</p>
       <div className="progress-track">
         <span style={{ width: `${progress.pct.hasValue}%`, background: "var(--glow)" }} />
-        <span style={{ width: `${progress.pct.learned}%`, background: "rgba(79,209,165,0.35)" }} />
+        <span style={{ width: `${progress.pct.learned}%`, background: "rgba(18,128,95,0.3)" }} />
         <span style={{ width: `${progress.pct.unlearned}%`, background: "var(--locked)" }} />
       </div>
       <p className="muted" style={{ marginTop: 8 }}>

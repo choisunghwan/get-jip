@@ -20,7 +20,7 @@ export default function RuleSetSwitcher({ ruleSets, current, onSwitch, deltas, o
               className={`btn${on ? " primary" : ""}`}
               style={
                 on && warn
-                  ? { background: "rgba(255,140,105,0.14)", borderColor: "var(--warn)", color: "var(--warn)" }
+                  ? { background: "rgba(37,99,235,0.12)", borderColor: "var(--warn)", color: "var(--warn)" }
                   : undefined
               }
               onClick={() => {

@@ -236,7 +236,7 @@ export default function BrainGraph({
             const activated = statuses[e.from] !== "unlearned" && statuses[e.to] !== "unlearned";
             const sameArea = NODE_BY_ID[e.from].area === NODE_BY_ID[e.to].area;
             const litColor = sameArea ? AREAS[NODE_BY_ID[e.from].area].color : "var(--glow)";
-            const stroke = activated ? litColor : e.cross ? "#bfae92" : "#d7ccb8";
+            const stroke = activated ? litColor : e.cross ? "#b9c0ca" : "#d3d8de";
 
             return (
               <line
@@ -271,11 +271,11 @@ export default function BrainGraph({
               : null;
 
             let fill = "none";
-            let stroke = "#c2b6a0";
+            let stroke = "#c3c9d1";
             let strokeDash;
             let textFill = "var(--text)";
             if (status === "unlearned") {
-              stroke = "#c2b6a0";
+              stroke = "#c3c9d1";
               strokeDash = "3 3";
             } else if (status === "learned") {
               fill = hexA(area.color, 0.18);
@@ -359,12 +359,12 @@ export default function BrainGraph({
         </button>
         {legendOpen && (
           <div className="legend-body">
-            <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #c2b6a0" }} /> 미학습 (아직 안 배움)</div>
-            <div className="row"><span className="dot" style={{ background: hexA("#1a9d73", 0.22), border: "2px solid var(--glow)" }} /> 배움 (개념만)</div>
+            <div className="row"><span className="dot" style={{ background: "transparent", border: "1.5px dashed #c3c9d1" }} /> 미학습 (아직 안 배움)</div>
+            <div className="row"><span className="dot" style={{ background: hexA("#12805f", 0.22), border: "2px solid var(--glow)" }} /> 배움 (개념만)</div>
             <div className="row"><span className="dot" style={{ background: "var(--glow)" }} /> 내값있음</div>
-            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2px solid #d7ccb8" }} /> 같은 영역끼리</div>
-            <div className="row"><span style={{ width: 18, borderTop: "1.6px dashed #bfae92" }} /> 다른 영역과 연결</div>
-            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2.4px solid #1a9d73" }} /> 굵고 진하면 활성화</div>
+            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2px solid #d3d8de" }} /> 같은 영역끼리</div>
+            <div className="row"><span style={{ width: 18, borderTop: "1.6px dashed #b9c0ca" }} /> 다른 영역과 연결</div>
+            <div className="row" style={{ marginTop: 5 }}><span style={{ width: 18, borderTop: "2.4px solid #12805f" }} /> 굵고 진하면 활성화</div>
           </div>
         )}
       </div>

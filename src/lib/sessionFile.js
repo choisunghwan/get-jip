@@ -60,25 +60,25 @@ ${
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>집짓기 리포트 — ${esc(m.name)} · ${esc(m.dateOnly)}</title>
 <style>
-  body{font-family:-apple-system,"Segoe UI","Noto Sans KR",sans-serif;max-width:660px;margin:32px auto;padding:0 20px;color:#2c2824;line-height:1.65}
+  body{font-family:-apple-system,"Segoe UI","Noto Sans KR",sans-serif;max-width:660px;margin:32px auto;padding:0 20px;color:#1f2430;line-height:1.65}
   h1{font-size:22px;margin:0 0 4px}
-  h2{font-size:15px;margin:28px 0 10px;color:#8c8478}
+  h2{font-size:15px;margin:28px 0 10px;color:#7b8494}
   h3{font-size:14px;margin:16px 0 6px;display:flex;align-items:center;gap:7px}
   h3 .n{color:#fff;width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;flex:none}
-  h3 em{font-style:normal;font-size:11px;color:#8c8478;font-weight:400}
-  .meta{color:#8c8478;font-size:13px;margin:0}
-  .step{border-left:2px solid #e7ddcd;padding:2px 0 8px 12px;margin-bottom:6px}
+  h3 em{font-style:normal;font-size:11px;color:#7b8494;font-weight:400}
+  .meta{color:#7b8494;font-size:13px;margin:0}
+  .step{border-left:2px solid #e3e6ea;padding:2px 0 8px 12px;margin-bottom:6px}
   .v{font-weight:700;margin:2px 0 8px}
-  .dim{color:#8c8478;margin:2px 0}
+  .dim{color:#7b8494;margin:2px 0}
   table{border-collapse:collapse;width:100%;margin:6px 0}
-  th,td{border-bottom:1px solid #e7ddcd;padding:7px 4px;text-align:left;font-size:13.5px}
-  th{color:#8c8478;font-weight:600;width:52%}
+  th,td{border-bottom:1px solid #e3e6ea;padding:7px 4px;text-align:left;font-size:13.5px}
+  th{color:#7b8494;font-weight:600;width:52%}
   td{font-weight:700}
   ul{margin:0;padding-left:18px}
   li{font-size:13.5px;margin:2px 0}
-  hr{border:none;border-top:1px solid #e7ddcd;margin:26px 0 14px}
-  .foot{font-size:12px;color:#8c8478}
-  a{color:#1a9d73}
+  hr{border:none;border-top:1px solid #e3e6ea;margin:26px 0 14px}
+  .foot{font-size:12px;color:#7b8494}
+  a{color:#12805f}
 </style></head><body>${body}</body></html>`;
 }
 

@@ -10,10 +10,10 @@
 // ─────────────────────────────────────────────────────────────
 
 export const AREAS = {
-  seed: { key: "seed", label: "종잣돈", color: "#16a34a" },
-  apply: { key: "apply", label: "청약", color: "#2563eb" },
-  loan: { key: "loan", label: "대출", color: "#d97706" },
-  listing: { key: "listing", label: "매물", color: "#9333ea" },
+  seed: { key: "seed", label: "종잣돈", color: "#15803d" },
+  apply: { key: "apply", label: "청약", color: "#0891b2" },
+  loan: { key: "loan", label: "대출", color: "#1d4ed8" },
+  listing: { key: "listing", label: "매물", color: "#7c3aed" },
   deal: { key: "deal", label: "계약", color: "#dc2626" },
 };
 
