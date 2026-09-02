@@ -6,7 +6,7 @@ import SessionFile from "./SessionFile.jsx";
 import Icon from "./Icon.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
-export default function Roadmap({ name, state, actions, pipeline, stepProgress, level, onOpenStep }) {
+export default function Roadmap({ name, state, actions, pipeline, stepProgress, level, onOpenStep, onOpenReport }) {
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
   const allDone = currentIdx === -1;
 
@@ -26,6 +26,9 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
           <span><i className="rl-dot rl-current" /> 지금 할 단계</span>
           <span><i className="rl-dot rl-upcoming" /> 아직</span>
         </div>
+        <button className="btn road-report-btn" onClick={onOpenReport}>
+          <Icon name="scroll" size={14} /> 전체 리포트 보기·받기
+        </button>
       </div>
 
       <div className="road-list">

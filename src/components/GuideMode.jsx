@@ -14,7 +14,7 @@ import Icon from "./Icon.jsx";
 import { downloadSessionHtml } from "../lib/sessionFile.js";
 
 // 초보자 기본 화면. 여정 화면(뭘 해야 하는지) → 단계별 카드 흐름.
-export default function GuideMode({ state, pipeline, stepProgress, level, actions, homeSignal, onOpenPractice }) {
+export default function GuideMode({ state, pipeline, stepProgress, level, actions, homeSignal, onOpenReport, onOpenPractice }) {
   const [mode, setMode] = useState("roadmap"); // 'roadmap' | 'step'
 
   // 하단 탭바 '홈'을 누르면(같은 뷰 안에 있어도) 여정 화면으로
@@ -79,6 +79,7 @@ export default function GuideMode({ state, pipeline, stepProgress, level, action
         stepProgress={stepProgress}
         level={level}
         onOpenStep={openStep}
+        onOpenReport={onOpenReport}
       />
     );
   }

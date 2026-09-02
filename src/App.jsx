@@ -10,6 +10,7 @@ import CardFlow from "./components/CardFlow.jsx";
 import QuickStart from "./components/QuickStart.jsx";
 import GuideMode from "./components/GuideMode.jsx";
 import ListView from "./components/ListView.jsx";
+import ReportView from "./components/ReportView.jsx";
 import StepRail from "./components/StepRail.jsx";
 import RuleSetSwitcher from "./components/RuleSetSwitcher.jsx";
 import ProgressStats from "./components/ProgressStats.jsx";
@@ -23,6 +24,7 @@ export default function App() {
   const [focusAll, setFocusAll] = useState(false);
   const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map'
   const [homeSignal, setHomeSignal] = useState(0); // 바뀔 때마다 GuideMode가 여정 화면으로 리셋
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     document.title = state.userName ? `${state.userName}의 집짓기` : "집짓기 — 내 집 마련 가이드";
@@ -83,6 +85,7 @@ export default function App() {
   ) : null;
 
   const tabBar = <TabBar active={view === "guide" ? "home" : view} onHome={goHome} onList={goList} onMap={goMap} />;
+  const reportOverlay = showReport ? <ReportView state={state} onClose={() => setShowReport(false)} /> : null;
 
   if (view === "guide") {
     return (
@@ -96,9 +99,11 @@ export default function App() {
           level={level}
           actions={actions}
           homeSignal={homeSignal}
+          onOpenReport={() => setShowReport(true)}
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
         />
         {tabBar}
+        {reportOverlay}
         {practiceModal}
       </>
     );
@@ -110,6 +115,7 @@ export default function App() {
         {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
         <ListView state={state} pipeline={pipeline} statuses={statuses} onSelect={setSelectedId} />
         {tabBar}
+        {reportOverlay}
         {nodeSheet}
         {practiceModal}
       </>
@@ -178,6 +184,7 @@ export default function App() {
       </div>
 
       {tabBar}
+      {reportOverlay}
 
       {modal?.type === "card" && (
         <CardFlow
