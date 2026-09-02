@@ -115,6 +115,13 @@ const PATHS = {
     </>
   ),
   check: <polyline points="20 6 9 17 4 12" />,
+  share: (
+    <>
+      <path d="M12 15V3" />
+      <path d="M8 7l4-4 4 4" />
+      <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+    </>
+  ),
 };
 
 export default function Icon({ name, size = 16, style, className, strokeWidth = 2 }) {

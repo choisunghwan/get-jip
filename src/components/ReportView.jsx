@@ -1,5 +1,6 @@
 import { buildReportModel } from "../lib/reportModel.js";
 import { downloadSessionHtml } from "../lib/sessionFile.js";
+import ShareButton from "./ShareButton.jsx";
 import Icon from "./Icon.jsx";
 
 // 전체 진행을 하나의 리포트로 — 화면에서 읽고, 파일로 받기.
@@ -26,6 +27,11 @@ export default function ReportView({ state, onClose }) {
         <p className="muted" style={{ fontSize: 11, marginTop: 6 }}>
           받은 파일은 더블클릭하면 그대로 읽을 수 있고, 나중에 첫 화면에 올리면 여기서 이어서 할 수 있어요.
         </p>
+
+        <div className="report-share">
+          <p>이 도구가 도움 됐다면, 집 알아보는 친구에게도 알려주세요.</p>
+          <ShareButton className="btn" label="친구에게 링크 공유" />
+        </div>
 
         <h2 className="report-h2">지금 상황 한눈에</h2>
         <div className="report-kv">

@@ -3,6 +3,7 @@ import { eok } from "../lib/format.js";
 import HouseProgress from "./HouseProgress.jsx";
 import LevelBadge from "./LevelBadge.jsx";
 import SessionFile from "./SessionFile.jsx";
+import ShareButton from "./ShareButton.jsx";
 import Icon from "./Icon.jsx";
 
 // 착지 화면. "지금 뭘 해야 하는지"가 한눈에. 7단계 타임라인 + 현재 단계 CTA.
@@ -26,9 +27,12 @@ export default function Roadmap({ name, state, actions, pipeline, stepProgress, 
           <span><i className="rl-dot rl-current" /> 지금 할 단계</span>
           <span><i className="rl-dot rl-upcoming" /> 아직</span>
         </div>
-        <button className="btn road-report-btn" onClick={onOpenReport}>
-          <Icon name="scroll" size={14} /> 전체 리포트 보기·받기
-        </button>
+        <div className="road-hero-btns">
+          <button className="btn road-report-btn" onClick={onOpenReport}>
+            <Icon name="scroll" size={14} /> 전체 리포트 보기·받기
+          </button>
+          <ShareButton className="btn ghost road-share-btn" label="친구에게 공유" size={13} />
+        </div>
       </div>
 
       <div className="road-list">
