@@ -9,6 +9,7 @@ import CardFlow from "./components/CardFlow.jsx";
 import QuickStart from "./components/QuickStart.jsx";
 import GuideMode from "./components/GuideMode.jsx";
 import ListView from "./components/ListView.jsx";
+import ListingCompare from "./components/ListingCompare.jsx";
 import ReportView from "./components/ReportView.jsx";
 import StepRail from "./components/StepRail.jsx";
 import RuleSetSwitcher from "./components/RuleSetSwitcher.jsx";
@@ -21,7 +22,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [modal, setModal] = useState(null); // {type:'card'|'practice', ...}
   const [focusAll, setFocusAll] = useState(false);
-  const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map'
+  const [view, setView] = useState("guide"); // 'guide' | 'list' | 'map' | 'compare'
   const [homeSignal, setHomeSignal] = useState(0); // 바뀔 때마다 GuideMode가 여정 화면으로 리셋
   const [showReport, setShowReport] = useState(false);
 
@@ -53,6 +54,10 @@ export default function App() {
   const goMap = () => {
     setSelectedId(null);
     setView("map");
+  };
+  const goCompare = () => {
+    setSelectedId(null);
+    setView("compare");
   };
 
   const practiceModal =
@@ -101,6 +106,7 @@ export default function App() {
           onOpenPractice={(pid) => setModal({ type: "practice", practiceId: pid })}
           onOpenList={goList}
           onOpenMap={goMap}
+          onOpenCompare={goCompare}
         />
         {reportOverlay}
         {practiceModal}
@@ -116,6 +122,24 @@ export default function App() {
         {reportOverlay}
         {nodeSheet}
         {practiceModal}
+      </>
+    );
+  }
+
+  if (view === "compare") {
+    return (
+      <>
+        {showLevelUp && <LevelUpBanner level={level} onAck={() => actions.ackLevel(level.lv)} />}
+        <ListingCompare
+          state={state}
+          actions={actions}
+          onBack={goHome}
+          onSetTarget={(price) => {
+            actions.setFact("targetPrice", price);
+            goHome();
+          }}
+        />
+        {reportOverlay}
       </>
     );
   }

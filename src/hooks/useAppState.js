@@ -19,6 +19,7 @@ const DEFAULT_STATE = {
   stepTodos: {}, // { [stepId]: { [idx]: true } }  할 일 체크
   seenLevel: 1, // 레벨업 알림을 본 마지막 레벨
   localOnly: false, // true면 서버(D1) 저장 안 하고 이 브라우저에만
+  listings: [], // 현장에서 본 매물 후보들. { id, name, price, createdAt }
 };
 
 const DECAY_MS = 2600; // 재계산 흔들림 지속 시간
@@ -220,6 +221,20 @@ export function useAppState() {
     setState((s) => ({ ...s, localOnly: !!on }));
   }, []);
 
+  const addListing = useCallback((input) => {
+    setState((s) => ({
+      ...s,
+      listings: [
+        ...(s.listings || []),
+        { id: crypto.randomUUID(), name: (input.name || "").trim(), price: input.price, createdAt: Date.now() },
+      ],
+    }));
+  }, []);
+
+  const removeListing = useCallback((id) => {
+    setState((s) => ({ ...s, listings: (s.listings || []).filter((l) => l.id !== id) }));
+  }, []);
+
   useEffect(() => () => decayTimer.current && clearTimeout(decayTimer.current), []);
 
   return {
@@ -247,6 +262,8 @@ export function useAppState() {
       ackLevel,
       replaceState,
       setLocalOnly,
+      addListing,
+      removeListing,
       reset,
     },
   };

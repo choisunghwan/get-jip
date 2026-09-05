@@ -3,7 +3,7 @@ import ShareButton from "./ShareButton.jsx";
 import Icon from "./Icon.jsx";
 
 // 홈 화면을 깔끔하게 두기 위해 부가 기능을 전부 담는 바텀 시트.
-export default function MoreSheet({ state, actions, onClose, onOpenReport, onOpenList, onOpenMap }) {
+export default function MoreSheet({ state, actions, onClose, onOpenReport, onOpenList, onOpenMap, onOpenCompare }) {
   const go = (fn) => () => {
     onClose();
     fn();
@@ -16,6 +16,9 @@ export default function MoreSheet({ state, actions, onClose, onOpenReport, onOpe
 
         <button className="sheet-row" onClick={go(onOpenReport)}>
           <Icon name="scroll" size={17} /> 전체 리포트 보기·받기
+        </button>
+        <button className="sheet-row" onClick={go(onOpenCompare)}>
+          <Icon name="compass" size={17} /> 오늘 본 매물 비교
         </button>
         <ShareButton className="sheet-row" label="친구에게 링크 공유" size={17} />
 

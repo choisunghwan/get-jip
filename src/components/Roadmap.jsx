@@ -16,6 +16,7 @@ export default function Roadmap({
   onOpenReport,
   onOpenList,
   onOpenMap,
+  onOpenCompare,
 }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const currentIdx = JOURNEY.findIndex((s) => !stepProgress[s.id]?.done);
@@ -91,6 +92,7 @@ export default function Roadmap({
           onOpenReport={onOpenReport}
           onOpenList={onOpenList}
           onOpenMap={onOpenMap}
+          onOpenCompare={onOpenCompare}
         />
       )}
     </div>
