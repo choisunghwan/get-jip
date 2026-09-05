@@ -73,7 +73,13 @@ export const CARD_DECK = [
     field: {
       key: "interestRegion",
       input: "select",
-      options: ["서울", "성남 분당", "과천", "하남", "광명", "경기(그 외)", "인천", "지방"],
+      allowCustom: true,
+      placeholder: "예: 수원 영통구, 청주 등 직접 입력",
+      options: [
+        "서울", "성남 분당", "과천", "하남", "광명",
+        "수원", "용인", "화성", "인천", "대전", "세종",
+        "대구", "부산", "광주", "경기(그 외)", "지방(그 외)",
+      ],
     },
   },
   {

@@ -10,8 +10,11 @@ export default function FactField({ field, value, onChange }) {
   const scale = field.scale || 1;
   const matchesChip =
     field.input === "chips" && value != null && field.options.some((o) => o.value === value);
+  const matchesSelect =
+    field.input === "select" && value != null && field.options.includes(value);
   const [customOpen, setCustomOpen] = useState(
-    field.input === "chips" && value != null && !matchesChip
+    (field.input === "chips" && value != null && !matchesChip) ||
+      (field.input === "select" && field.allowCustom && value != null && !matchesSelect)
   );
 
   if (field.input === "bool") {
@@ -25,17 +28,44 @@ export default function FactField({ field, value, onChange }) {
 
   if (field.input === "select") {
     return (
-      <div className="chip-row big" style={{ marginTop: 12 }}>
-        {field.options.map((opt) => (
-          <button
-            key={opt}
-            className={`chip${value === opt ? " selected" : ""}`}
-            onClick={() => onChange(opt, true)}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
+      <>
+        <div className="chip-row big" style={{ marginTop: 12 }}>
+          {field.options.map((opt) => (
+            <button
+              key={opt}
+              className={`chip${!customOpen && value === opt ? " selected" : ""}`}
+              onClick={() => {
+                setCustomOpen(false);
+                onChange(opt, true);
+              }}
+            >
+              {opt}
+            </button>
+          ))}
+          {field.allowCustom && (
+            <button
+              className={`chip${customOpen ? " selected" : ""}`}
+              onClick={() => setCustomOpen(true)}
+            >
+              직접 입력
+            </button>
+          )}
+        </div>
+        {customOpen && (
+          <div className="field-row" style={{ marginTop: 10 }}>
+            <input
+              type="text"
+              autoFocus
+              placeholder={field.placeholder}
+              defaultValue={value != null && !matchesSelect ? value : ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                onChange(v === "" ? undefined : v, false);
+              }}
+            />
+          </div>
+        )}
+      </>
     );
   }
 
