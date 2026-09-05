@@ -96,7 +96,8 @@ input, select, textarea {
 }
 
 @media (max-width: 700px) {
-  html, body, #root { height: auto; min-height: 100%; }
+  /* 지도 화면일 때만 페이지 자체가 늘어나 스크롤됨 (App.jsx가 body.map-view 토글) */
+  body.map-view, body.map-view #root { height: auto; min-height: 100%; }
   .app { height: auto; min-height: 100%; }
   .app-body { flex-direction: column; flex: none; }
   .graph-pane { height: 60vh; flex: none; }

@@ -30,6 +30,13 @@ export default function App() {
     document.title = state.userName ? `${state.userName}의 집짓기` : "집짓기 — 내 집 마련 가이드";
   }, [state.userName]);
 
+  // 지도(.app) 화면만 페이지 자체가 늘어나 스크롤되는 레이아웃이 필요함.
+  // 그 외 화면(.guide/.road/.lst/.cmp)은 뷰포트 높이 고정 + 내부 스크롤이어야
+  // 하단 네비게이션 바가 내용 길이에 따라 흔들리지 않는다.
+  useEffect(() => {
+    document.body.classList.toggle("map-view", view === "map");
+  }, [view]);
+
   const showLevelUp = level.lv > state.seenLevel;
 
   const highlightIds = useMemo(() => {
